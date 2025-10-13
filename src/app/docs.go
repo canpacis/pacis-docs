@@ -51,7 +51,7 @@ func DocsLayout(app *server.App, children Node) Node {
 		Class("min-h-screen flex flex-col"),
 
 		Div(
-			Class("flex max-w-6xl w-full mx-auto my-2"),
+			Class("flex max-w-6xl flex-1 w-full mx-auto my-2"),
 
 			Nav(
 				Class("flex flex-col w-[200px] h-full p-4 gap-6"),
@@ -93,8 +93,8 @@ func DocsLayout(app *server.App, children Node) Node {
 					)
 				}),
 			),
-			Section(
-				Class("flex-1 h-full py-4 pr-8"),
+			Article(
+				Class("flex-1 py-4 pr-8"),
 
 				children,
 			),
@@ -107,8 +107,71 @@ func DocsLayout(app *server.App, children Node) Node {
 	))
 }
 
-type GettingStartedPayload struct {
-	Path string `path:"path"`
+func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
+	var element *Element
+
+	switch node.Type {
+	case parser.ParagraphNode:
+		element = P(Class("inline"))
+	case parser.LinkNode:
+		element = A(
+			Class("text-sky-400 underline inline"),
+			Href(node.Attributes.Get("href")),
+			Target("_blank"),
+		)
+	case parser.UnorderedListNode:
+		element = Ul(Class("list-disc list-inside"))
+	case parser.OrderedListNode:
+		element = Ol(Class("list-decimal list-inside"))
+	case parser.ListItemNode:
+		element = Li()
+	case parser.HeadingNode:
+		switch node.Attributes.Get(parser.HeadingLevelKey) {
+		case "#":
+			element = H1(Class("text-3xl font-semibold mb-2"))
+		case "##":
+			element = H2(Class("text-2xl font-semibold mb-2"))
+		case "###":
+			element = H3(Class("text-xl font-semibold mb-2"))
+		default:
+			element = H4(Class("text-lg font-semibold mb-2"))
+		}
+	case parser.SectionNode:
+		element = Section(Class("flex flex-col gap-4"), ID(node.Attributes.Get("id")))
+	case parser.StrongNode:
+		element = Span(Class("font-semibold"))
+	case parser.SuperscriptNode:
+		element = Sup()
+	case parser.SubscriptNode:
+		element = Sub()
+	case parser.FootnoteDefNode:
+		element = Span()
+	case parser.EmphasisNode:
+		element = Span(Class("italic"))
+	case parser.ImageNode:
+		element = Img(Class("w-full rounded-lg"), Src(node.Attributes.Get("src")))
+	case parser.QuoteNode:
+		element = Blockquote(Class("border-l-4 border-accent pl-3 py-2"))
+	case parser.VerbatimNode:
+		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2"))
+	case parser.ThematicBreakNode:
+		element = Hr()
+	case parser.CodeNode:
+		return CodeComponent(node.Attributes.Get("$CodeLangKey"), string(node.FullText()))
+	case parser.TextNode:
+		return Text(node.Text)
+	default:
+		nodes := Fragment()
+		for _, child := range node.Children {
+			nodes = append(nodes, BuildMarkup(child))
+		}
+		return nodes
+	}
+
+	for _, child := range node.Children {
+		element.AppendNode(BuildMarkup(child))
+	}
+	return element
 }
 
 func DocPage(name string) func(*server.App) Node {
@@ -133,28 +196,16 @@ func DocPage(name string) func(*server.App) Node {
 		}
 	}
 
-	nodes := Frag{}
-	parser.BuildDjotAst(file)[0].Traverse(func(node parser.TreeNode[parser.DjotNode]) {
-		switch node.Type {
-		case parser.HeadingNode:
-			nodes = append(nodes, H1(Class("text-3xl font-semibold mb-2"), Text(node.FullText())))
-		case parser.ParagraphNode:
-			nodes = append(nodes, P(Text(node.FullText())))
-		}
-	})
+	markup := BuildMarkup(parser.BuildDjotAst(file)[0])
 
 	return func(*server.App) Node {
-		return Section(
-			Class("flex flex-col gap-8"),
+		return Div(
+			Class("flex flex-col justify-between h-full gap-8"),
+
+			markup,
 
 			Div(
-				Class("flex flex-col gap-4"),
-
-				nodes,
-			),
-
-			Div(
-				Class("flex gap-2"),
+				Class("flex gap-2 mt-auto"),
 
 				IfFn(prev != nil, func() Item {
 					return EndButtonLink("Go Back", prev.Label, prev.Href, false)
