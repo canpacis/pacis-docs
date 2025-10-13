@@ -15,6 +15,7 @@ func RootLayout(app *server.App, children Node) Node {
 			Title(Text("Welcome to Pacis")),
 
 			Link(Rel("stylesheet"), Href(server.Asset(app, "style.css"))),
+			Link(Rel("icon"), Type("image/webp"), Href(server.Asset(app, "static/favicon.webp"))),
 			Script(Defer, Type("module"), Src(server.Asset(app, "main.ts"))),
 			server.HMR(app),
 			font.Head(
@@ -22,6 +23,8 @@ func RootLayout(app *server.App, children Node) Node {
 			),
 		),
 		Body(
+			Class("dark"),
+
 			children,
 			Script(Src(server.Asset(app, "stream.ts"))),
 		),

@@ -2,10 +2,10 @@ github.com/BurntSushi/toml v1.5.0 h1:W5quZX/G/csjUnuI8SUYlsHs9M38FC7znL0lIO+DvMg
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cqUQ3I=
 github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
+github.com/Oudwins/tailwind-merge-go v0.2.1 h1:jxRaEqGtwwwF48UuFIQ8g8XT7YSualNuGzCvQ89nPFE=
+github.com/Oudwins/tailwind-merge-go v0.2.1/go.mod h1:kkZodgOPvZQ8f7SIrlWkG/w1g9JTbtnptnePIh3V72U=
 github.com/canpacis/http-payload v0.3.1 h1:GfDEp+LSP5EbUROQcGJdfUFqyDGNNdTto4bC28p9fCo=
 github.com/canpacis/http-payload v0.3.1/go.mod h1:NT+lGXUd6wWFZj6kVZmjzExQwMcQB3BXIABh02oIyzA=
-github.com/canpacis/pacis v0.4.1 h1:Ugh54XoU81ZilQedw1ecs7t9tdYn5r1BTXPMA2f1Jkc=
-github.com/canpacis/pacis v0.4.1/go.mod h1:FxvZcV5Q9RlE/jLefWrOMWY25t2BuZvPCb8UZUTN/8U=
 github.com/canpacis/pacis v0.4.2 h1:4cTSDivdY0FjkxiH3fzOe0HvJamKxoezqrASHdl0NIc=
 github.com/canpacis/pacis v0.4.2/go.mod h1:FxvZcV5Q9RlE/jLefWrOMWY25t2BuZvPCb8UZUTN/8U=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -15,6 +15,8 @@ github.com/nicksnyder/go-i18n/v2 v2.6.0 h1:C/m2NNWNiTB6SK4Ao8df5EWm3JETSTIGNXBpM
 github.com/nicksnyder/go-i18n/v2 v2.6.0/go.mod h1:88sRqr0C6OPyJn0/KRNaEz1uWorjxIKP7rUUcvycecE=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/sivukhin/godjot v1.0.6 h1:yoRD+hlcDbSxP9Gd/KRVlEFXgtGyZyt0CHwhY6Gk3EQ=
+github.com/sivukhin/godjot v1.0.6/go.mod h1:wA6KdR4Z+XpwdwyViPDLWYYxT72pKjNc6XGA9I025gM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
