@@ -1,0 +1,19 @@
+{
+  "name": "pacis-app",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "vite": "^7.1.9"
+  }
+}
