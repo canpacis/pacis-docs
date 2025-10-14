@@ -94,7 +94,7 @@ func DocsLayout(app *server.Server, children Node) Node {
 				}),
 			),
 			Div(
-				Class("flex flex-col"),
+				Class("flex flex-col w-full"),
 
 				Header(
 					Class("py-3 my-3 px-6 flex md:hidden items-center justify-between sticky top-0 bg-background border-b z-40"),
@@ -105,7 +105,7 @@ func DocsLayout(app *server.Server, children Node) Node {
 					Logo(),
 				),
 				Article(
-					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-full"),
+					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-auto"),
 
 					children,
 				),
