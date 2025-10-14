@@ -15,9 +15,9 @@ func Home(*server.Server) Node {
 		Div(
 			Class("relative flex h-[500px] w-full min-h-screen flex-col items-center justify-center overflow-hidden rounded-lg"),
 
-			// HeroBackground(
-			// 	Class("top-0 bottom-0 m-auto skew-y-12 z-0 h-screen w-screen lg:h-auto lg:w-auto [mask-image:radial-gradient(400px_circle_at_center,white,transparent)] md:[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"),
-			// ),
+			HeroBackground(
+				Class("top-0 bottom-0 m-auto skew-y-12 z-0 h-screen w-screen lg:h-auto lg:w-auto [mask-image:radial-gradient(400px_circle_at_center,white,transparent)] md:[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"),
+			),
 
 			Div(
 				Class("relative z-10 flex flex-col items-center gap-8 max-w-xl px-4 mx-auto text-center"),
