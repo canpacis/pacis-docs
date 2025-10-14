@@ -7,7 +7,7 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/canpacis/pacis-app/src/app"
+	"github.com/canpacis/pacis-docs/src/app"
 	"github.com/canpacis/pacis/server"
 )
 
