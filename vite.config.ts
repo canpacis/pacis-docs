@@ -9,6 +9,11 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  server: {
+    hmr: {
+      port: 5173,
+    },
+  },
   build: {
     manifest: true,
     lib: {

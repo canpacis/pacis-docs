@@ -23,8 +23,10 @@ func main() {
 			server.HandlePage("GET "+link.Href, app.DocPage(link.File), app.DocsLayout)
 		}
 	}
+	server.Handle("GET /getting-started", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
 	server.Handle("GET /getting-started/", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
 	server.Handle("GET /core-concepts/", http.RedirectHandler("/core-concepts/components", http.StatusFound))
+	server.Handle("GET /core-concepts", http.RedirectHandler("/core-concepts/components", http.StatusFound))
 
 	server.Serve()
 }

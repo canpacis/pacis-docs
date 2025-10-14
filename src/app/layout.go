@@ -16,8 +16,8 @@ func RootLayout(server *server.Server, children Node) Node {
 			Meta(Charset("UTF-8")),
 			Meta(Name("viewport"), Content("width=device-width, initial-scale=1.0")),
 			Title(Text("Welcome to Pacis")),
+			Link(Rel("icon"), Type("image/x-icon"), Href("/favicon.ico")),
 
-			Link(Rel("icon"), Type("image/webp"), Href("/favicon.webp")),
 			Link(Rel("stylesheet"), Href(server.Asset("/src/web/style.css"))),
 			Script(Type("module"), Src(server.Asset("/src/web/main.ts"))),
 			server.HMR(),
