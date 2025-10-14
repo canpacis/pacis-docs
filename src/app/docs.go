@@ -35,7 +35,7 @@ var Docs = []DocTitle{
 		Links: []DocLink{
 			{Label: "Introduction", Href: "/getting-started/introduction/", File: "introduction"},
 			{Label: "Installation", Href: "/getting-started/installation/", File: "installation"},
-			{Label: "Qucik Start", Href: "/getting-started/quick-start/", File: "quick-start"},
+			{Label: "Quick Start", Href: "/getting-started/quick-start/", File: "quick-start"},
 			{Label: "Templating", Href: "/getting-started/templating/", File: "templating"},
 			{Label: "Conventions", Href: "/getting-started/conventions/", File: "conventions"},
 		},
@@ -44,10 +44,13 @@ var Docs = []DocTitle{
 		Label: "Core Concepts",
 		Href:  "/core-concepts",
 		Links: []DocLink{
-			{Label: "Components", Href: "/core-concepts/components/", File: "components"},
+			{Label: "Rendering", Href: "/core-concepts/rendering/", File: "rendering"},
+			{Label: "Request Data", Href: "/core-concepts/request-data/", File: "request-data"},
 			{Label: "Streaming", Href: "/core-concepts/streaming/", File: "streaming"},
+			{Label: "Middlewares", Href: "/core-concepts/middlewares/", File: "middlewares"},
 			{Label: "Caching", Href: "/core-concepts/caching/", File: "caching"},
-			{Label: "Data Fetching", Href: "/core-concepts/data-fetching/", File: "data-fetching"},
+			{Label: "Assets", Href: "/core-concepts/assets/", File: "assets"},
+			{Label: "Deploying", Href: "/core-concepts/deploying/", File: "deploying"},
 		},
 	},
 }
@@ -180,7 +183,13 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		element = Hr()
 	case parser.CodeNode:
 		lang := node.Attributes.Get("$CodeLangKey")
-		return CodeComponent(lang, string(node.FullText()), node.Attributes.Get("file"), lang == "go")
+		noaccessory := node.Attributes.Get("noaccessory")
+		return CodeComponent(
+			lang,
+			string(node.FullText()),
+			node.Attributes.Get("file"),
+			lang == "go" && noaccessory != "true",
+		)
 	case parser.TextNode:
 		return Text(strings.ReplaceAll(string(node.Text), "&rsquo;", "'"))
 	default:
@@ -191,6 +200,10 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		return nodes
 	}
 
+	class := node.Attributes.Get("class")
+	if len(class) > 0 {
+		element.AddClass(class)
+	}
 	for _, child := range node.Children {
 		element.AppendNode(BuildMarkup(child))
 	}
