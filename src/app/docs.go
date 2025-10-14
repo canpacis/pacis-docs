@@ -3,10 +3,12 @@ package app
 import (
 	"context"
 	"embed"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/canpacis/pacis-docs/src/icons"
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
@@ -32,6 +34,7 @@ var Docs = []DocTitle{
 			{Label: "Introduction", Href: "/getting-started/introduction/", File: "introduction"},
 			{Label: "Installation", Href: "/getting-started/installation/", File: "installation"},
 			{Label: "Qucik Start", Href: "/getting-started/quick-start/", File: "quick-start"},
+			{Label: "Templating", Href: "/getting-started/templating/", File: "templating"},
 			{Label: "Tutorial", Href: "/getting-started/tutorial/", File: "tutorial"},
 			{Label: "Conventions", Href: "/getting-started/conventions/", File: "conventions"},
 		},
@@ -57,7 +60,7 @@ func DocsLayout(app *server.Server, children Node) Node {
 			Class("flex flex-1 max-w-6xl w-full mx-auto my-0 md:my-2 gap-6 h-full"),
 
 			Nav(
-				Class("hidden md:flex flex-1 w-full flex-col max-w-[180px] lg:max-w-[224px] p-4 gap-6"),
+				Class("hidden md:flex w-full flex-col max-w-[180px] h-fit lg:max-w-[224px] p-4 gap-6 sticky top-0"),
 
 				Logo(),
 
@@ -105,9 +108,17 @@ func DocsLayout(app *server.Server, children Node) Node {
 			),
 		),
 		Footer(
-			Class("mt-auto flex w-full max-w-6xl mx-auto items-center justify-center py-3 border-t text-sm"),
+			Class("mt-auto flex w-full max-w-6xl mx-auto items-center justify-between px-8 py-3 border-t text-sm"),
 
 			P(Class("text-muted-foreground"), Text("Made with Pacis")),
+			Div(
+				A(
+					Href("https://github.com/canpacis/pacis"),
+					Target("_blank"),
+
+					icons.GithubMark(Class("text-muted-foreground hover:text-foreground transition-colors")),
+				),
+			),
 		),
 	))
 }
@@ -122,8 +133,10 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		element = A(
 			Class("text-sky-400 underline inline"),
 			Href(node.Attributes.Get("href")),
-			Target("_blank"),
 		)
+		if strings.HasPrefix(node.Attributes.Get("href"), "https://") {
+			element.SetAttribute("target", "_blank")
+		}
 	case parser.UnorderedListNode:
 		element = Ul(Class("list-disc list-inside"))
 	case parser.OrderedListNode:
@@ -162,7 +175,8 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.ThematicBreakNode:
 		element = Hr()
 	case parser.CodeNode:
-		return CodeComponent(node.Attributes.Get("$CodeLangKey"), string(node.FullText()))
+		lang := node.Attributes.Get("$CodeLangKey")
+		return CodeComponent(lang, string(node.FullText()), node.Attributes.Get("file"), lang == "go")
 	case parser.TextNode:
 		return Text(strings.ReplaceAll(string(node.Text), "&rsquo;", "'"))
 	default:
@@ -225,17 +239,40 @@ func DocPage(env server.Environment, name string) func(*server.Server) Node {
 		return Div(
 			Class("flex flex-col justify-between h-full gap-8"),
 
-			markup,
+			Div(
+				Class("flex flex-col gap-8 mb-20"),
+
+				markup,
+			),
 
 			Div(
-				Class("flex gap-2 mt-auto"),
+				Class("flex flex-col gap-6 mt-auto"),
 
-				IfFn(prev != nil, func() Item {
-					return EndButtonLink("Go Back", prev.Label, prev.Href, false)
-				}),
-				IfFn(next != nil, func() Item {
-					return EndButtonLink("Next Up", next.Label, next.Href, true)
-				}),
+				Div(
+					Class("text-sm w-full flex gap-3 items-end"),
+
+					P(
+						Text("Do you see something wrong with this page?"),
+					),
+					A(
+						Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s.md", name)),
+						Target("_blank"),
+						Class("flex gap-2 items-center text-sky-400"),
+
+						Text("Edit It"),
+						lucide.Pen(Class("size-4")),
+					),
+				),
+				Div(
+					Class("flex gap-2"),
+
+					IfFn(prev != nil, func() Item {
+						return EndButtonLink("Go Back", prev.Label, prev.Href, false)
+					}),
+					IfFn(next != nil, func() Item {
+						return EndButtonLink("Next Up", next.Label, next.Href, true)
+					}),
+				),
 			),
 		)
 	}

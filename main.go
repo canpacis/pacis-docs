@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/canpacis/pacis-app/src/app"
+	"github.com/canpacis/pacis-docs/src/app"
 	"github.com/canpacis/pacis/server"
 	"github.com/canpacis/pacis/server/middleware"
 )

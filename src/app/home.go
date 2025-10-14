@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	"github.com/canpacis/pacis-docs/src/icons"
 	"github.com/canpacis/pacis/components"
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
@@ -39,8 +40,16 @@ func Home(*server.Server) Node {
 				),
 
 				Div(
-					Class("flex justify-center"),
+					Class("flex justify-center gap-4"),
 
+					A(
+						Class("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2"),
+						Href("https://github.com/canpacis/pacis"),
+						Target("_blank"),
+
+						icons.GithubMark(),
+						Text("Github"),
+					),
 					A(
 						Class("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2"),
 						Href("/getting-started"),
@@ -76,7 +85,7 @@ func HeroBackground(items ...Item) Node {
 					Attr("y", fmt.Sprintf("%d", y)),
 					Width(fmt.Sprintf("%d", size)),
 					Height(fmt.Sprintf("%d", size)),
-					Class("stroke-border transition-all duration-100 ease-in-out [&:not(:hover)]:duration-1000 fill-transparent hover:fill-border"),
+					Class("stroke-border transition-all duration-100 ease-in-out [&:not(:hover)]:duration-1000 fill-background hover:fill-border"),
 				)
 			}),
 		)...,

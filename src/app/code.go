@@ -10,6 +10,8 @@ import (
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/canpacis/pacis/html"
+	"github.com/canpacis/pacis/lucide"
+	"github.com/canpacis/pacis/x"
 )
 
 func gettokclass(typ chroma.TokenType) string {
@@ -113,7 +115,7 @@ func gettokclass(typ chroma.TokenType) string {
 		return "text-orange-600 dark:text-orange-400"
 
 	case chroma.Operator, chroma.OperatorWord:
-		return "text-neutral-200 dark:text-neutral-400"
+		return "text-neutral-400 dark:text-neutral-600"
 
 	case chroma.Punctuation:
 		return "text-muted-foreground"
@@ -167,7 +169,7 @@ var htmlformatter = chroma.FormatterFunc(func(w io.Writer, style *chroma.Style, 
 	return nil
 })
 
-func CodeComponent(language, code string) html.Node {
+func CodeComponent(language, code, name string, accsessories bool) html.Node {
 	lexer := lexers.Get(language)
 	if lexer == nil {
 		lexer = lexers.Fallback
@@ -183,9 +185,26 @@ func CodeComponent(language, code string) html.Node {
 		log.Fatal(err)
 	}
 
-	return html.Code(
-		html.Class("text-sm py-2 px-3 bg-accent rounded-md"),
+	return html.Div(
+		html.Attr("x-data", "{}"),
+		html.Class("text-sm p-4 bg-background border rounded-md"),
 
-		html.Pre(html.RawUnsafe(buf.String())),
+		html.If(accsessories,
+			html.Div(
+				html.Class("flex justify-between gap-4 border-b pb-1.5 mb-1.5 text-muted-foreground"),
+
+				html.P(html.Class("text-xs"), html.Text(name)),
+				html.Button(
+					x.On("click", "navigator.clipboard.writeText($refs.code.innerText)"),
+
+					lucide.Copy(html.Class("size-4")),
+				),
+			),
+		),
+		html.Code(
+			x.Ref("code"),
+
+			html.Pre(html.Class("whitespace-pre-wrap"), html.RawUnsafe(buf.String())),
+		),
 	)
 }
