@@ -8,6 +8,7 @@ import (
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
+	"github.com/canpacis/pacis/x"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
 
@@ -51,18 +52,12 @@ func DocsLayout(app *server.App, children Node) Node {
 		Class("min-h-screen flex flex-col"),
 
 		Div(
-			Class("flex max-w-6xl flex-1 w-full mx-auto my-2"),
+			Class("flex flex-1 max-w-6xl w-full mx-auto my-0 md:my-2 gap-6 h-full"),
 
 			Nav(
-				Class("flex flex-col w-[200px] h-full p-4 gap-6"),
+				Class("hidden md:flex flex-1 w-full flex-col max-w-[180px] lg:max-w-[224px] p-4 gap-6"),
 
-				A(
-					Class("flex gap-2 items-center"),
-					Href("/"),
-
-					Img(Src(server.Asset(app, "static/logo.webp")), Class("h-7")),
-					Span(Class("uppercase text-lg font-light select-none"), Text("Pacis")),
-				),
+				Logo(app),
 
 				Map(Docs, func(title DocTitle) Node {
 					return Div(
@@ -94,8 +89,16 @@ func DocsLayout(app *server.App, children Node) Node {
 				}),
 			),
 			Article(
-				Class("flex-1 py-4 pr-8"),
+				Class("flex-1 py-4 px-6 md:pl-0 md:pr-8 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0"),
 
+				Header(
+					Class("py-3 flex md:hidden items-center justify-between sticky top-0 bg-background border-b"),
+
+					Div(
+						MobileNav(),
+					),
+					Logo(app),
+				),
 				children,
 			),
 		),
@@ -112,7 +115,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 
 	switch node.Type {
 	case parser.ParagraphNode:
-		element = P(Class("inline"))
+		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
 		element = A(
 			Class("text-sky-400 underline inline"),
@@ -221,7 +224,7 @@ func DocPage(name string) func(*server.App) Node {
 func EndButtonLink(label, title, href string, forwards bool) Node {
 	return A(
 		Href(href),
-		Class("px-4 py-4 min-h-14 min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent"),
+		Class("px-4 py-4 min-h-14 min-w-34 w-full md:w-fit md:min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent"),
 		If(forwards, Class("ml-auto")),
 
 		Span(
@@ -236,6 +239,69 @@ func EndButtonLink(label, title, href string, forwards bool) Node {
 			If(!forwards, lucide.ArrowLeft(Class("size-5"))),
 			P(Class("font-semibold"), Text(title)),
 			If(forwards, lucide.ArrowRight(Class("size-5"))),
+		),
+	)
+}
+
+func Logo(app *server.App) Node {
+	return A(
+		Class("flex flex-row-reverse md:flex-row gap-2 items-center"),
+		Href("/"),
+
+		Img(Src(server.Asset(app, "static/logo.webp")), Class("h-7")),
+		Span(Class("uppercase text-lg font-light select-none"), Text("Pacis")),
+	)
+}
+
+func MobileNav() Node {
+	return Span(
+		x.Data(map[string]any{"open": false}),
+
+		Button(x.On("click", "open = !open"), Class("px-2 py-1"), lucide.Menu(Class("size-5"))),
+
+		Div(
+			x.Cloak,
+			x.Show("open"),
+			x.On("click", "open = false", x.Outside),
+			Attr("x-transition:enter-start", "translate-x-[-60vw]"),
+			Attr("x-transition:enter-end", "translate-x-0"),
+			Attr("x-transition:leave-start", "translate-x-0"),
+			Attr("x-transition:leave-end", "translate-x-[-60vw]"),
+			Attr("x-trap.noscroll", "open"),
+			Class("fixed top-0 left-0 bg-background border-r h-screen w-[60vw] flex transition-transform duration-500"),
+
+			Nav(
+				Class("flex flex-col w-full h-full p-4 gap-6"),
+
+				Map(Docs, func(title DocTitle) Node {
+					return Div(
+						Class("flex flex-col gap-2"),
+
+						P(Class("font-semibold"), Text(title.Label)),
+						Ul(
+							Class("flex flex-col gap-0.5"),
+
+							Map(title.Links, func(link DocLink) Node {
+								return Li(
+									A(
+										Class("hover:bg-accent w-full h-8 flex text-sm rounded-md px-3 items-center data-[state=active]:bg-accent"),
+										DeferredAttr("data-state", func(ctx context.Context) string {
+											detail := server.Detail(ctx)
+											if detail.URL.Path == link.Href {
+												return "active"
+											}
+											return ""
+										}),
+										Href(link.Href),
+
+										Text(link.Label),
+									),
+								)
+							}),
+						),
+					)
+				}),
+			),
 		),
 	)
 }

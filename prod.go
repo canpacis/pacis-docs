@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/canpacis/pacis/server"
+	"github.com/canpacis/pacis/server/middleware"
 )
 
 var (
@@ -23,4 +24,5 @@ func Ready(app *server.App) {
 	if err := app.SetBuildDir("build", build); err != nil {
 		log.Fatal(err)
 	}
+	app.Use(middleware.DefaultColorScheme)
 }

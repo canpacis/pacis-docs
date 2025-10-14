@@ -2,7 +2,10 @@
 
 package main
 
-import "github.com/canpacis/pacis/server"
+import (
+	"github.com/canpacis/pacis/server"
+	"github.com/canpacis/pacis/server/middleware"
+)
 
 func init() {
 	AppEnv = server.Dev
@@ -10,5 +13,6 @@ func init() {
 	DevServer = "http://localhost:5173"
 }
 
-// Noop
-func Ready(*server.App) {}
+func Ready(app *server.App) {
+	app.Use(middleware.DefaultColorScheme)
+}
