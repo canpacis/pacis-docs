@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strings"
 
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
@@ -47,7 +48,7 @@ var Docs = []DocTitle{
 	},
 }
 
-func DocsLayout(app *server.App, children Node) Node {
+func DocsLayout(app *server.Server, children Node) Node {
 	return RootLayout(app, Main(
 		Class("min-h-screen flex flex-col"),
 
@@ -57,7 +58,7 @@ func DocsLayout(app *server.App, children Node) Node {
 			Nav(
 				Class("hidden md:flex flex-1 w-full flex-col max-w-[180px] lg:max-w-[224px] p-4 gap-6"),
 
-				Logo(app),
+				Logo(),
 
 				Map(Docs, func(title DocTitle) Node {
 					return Div(
@@ -97,7 +98,7 @@ func DocsLayout(app *server.App, children Node) Node {
 					Div(
 						MobileNav(),
 					),
-					Logo(app),
+					Logo(),
 				),
 				children,
 			),
@@ -154,7 +155,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.ImageNode:
 		element = Img(Class("w-full rounded-lg"), Src(node.Attributes.Get("src")))
 	case parser.QuoteNode:
-		element = Blockquote(Class("border-l-4 border-accent pl-3 py-2"))
+		element = Blockquote(Class("border-l-5 border-accent pl-2 py-2"))
 	case parser.VerbatimNode:
 		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2"))
 	case parser.ThematicBreakNode:
@@ -162,7 +163,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.CodeNode:
 		return CodeComponent(node.Attributes.Get("$CodeLangKey"), string(node.FullText()))
 	case parser.TextNode:
-		return Text(node.Text)
+		return Text(strings.ReplaceAll(string(node.Text), "&rsquo;", "'"))
 	default:
 		nodes := Fragment()
 		for _, child := range node.Children {
@@ -177,7 +178,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	return element
 }
 
-func DocPage(name string) func(*server.App) Node {
+func DocPage(name string) func(*server.Server) Node {
 	file, err := os.ReadFile("src/app/docs/" + name + ".md")
 	if err != nil {
 		log.Fatal(err)
@@ -201,7 +202,7 @@ func DocPage(name string) func(*server.App) Node {
 
 	markup := BuildMarkup(parser.BuildDjotAst(file)[0])
 
-	return func(*server.App) Node {
+	return func(*server.Server) Node {
 		return Div(
 			Class("flex flex-col justify-between h-full gap-8"),
 
@@ -243,12 +244,12 @@ func EndButtonLink(label, title, href string, forwards bool) Node {
 	)
 }
 
-func Logo(app *server.App) Node {
+func Logo() Node {
 	return A(
 		Class("flex flex-row-reverse md:flex-row gap-2 items-center"),
 		Href("/"),
 
-		Img(Src(server.Asset(app, "static/logo.webp")), Class("h-7")),
+		Img(Src("/logo.webp"), Class("h-7")),
 		Span(Class("uppercase text-lg font-light select-none"), Text("Pacis")),
 	)
 }

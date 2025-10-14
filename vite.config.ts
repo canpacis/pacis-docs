@@ -20,7 +20,7 @@ export default defineConfig({
       name: "App",
       fileName: "app",
     },
-    outDir: "build",
+    outDir: "build/static",
     cssCodeSplit: true,
     rollupOptions: {
       output: {

@@ -8,31 +8,23 @@ import (
 	"github.com/canpacis/pacis/server/middleware"
 )
 
-var (
-	AppEnv    server.Environment
-	AppPort   string
-	DevServer string
-)
+var options *server.Options
 
 func main() {
-	application := server.NewApp(
-		server.WithEnv(AppEnv),
-		server.WithPort(AppPort),
-		server.WithDevServer(DevServer),
-	)
-	Ready(application)
+	server := server.New(options)
 
-	mux := http.NewServeMux()
-	mux.Handle("GET /assets/", http.StripPrefix("/assets/", application.ServeAssets()))
+	Ready(server)
 
-	application.Register(mux, server.RouteOf("/", app.Home, app.RootLayout, middleware.DefaultGzip))
+	server.Use(middleware.DefaultColorScheme)
+
+	server.HandlePage("GET /", app.Home, app.RootLayout, middleware.DefaultGzip)
 	for _, doc := range app.Docs {
 		for _, link := range doc.Links {
-			application.Register(mux, server.RouteOf(link.Href, app.DocPage(link.File), app.DocsLayout))
+			server.HandlePage("GET "+link.Href, app.DocPage(link.File), app.DocsLayout)
 		}
 	}
-	application.Register(mux, server.RedirectRoute("/getting-started", "/getting-started/introduction"))
-	application.Register(mux, server.RedirectRoute("/core-concepts/", "/core-concepts/components"))
+	server.Handle("GET /getting-started/", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
+	server.Handle("GET /core-concepts/", http.RedirectHandler("/core-concepts/components", http.StatusFound))
 
-	server.Serve(application, mux)
+	server.Serve()
 }

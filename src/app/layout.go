@@ -9,7 +9,7 @@ import (
 	"github.com/canpacis/pacis/server/middleware"
 )
 
-func RootLayout(app *server.App, children Node) Node {
+func RootLayout(server *server.Server, children Node) Node {
 	return Fragment(
 		Doctype,
 		Head(
@@ -17,10 +17,10 @@ func RootLayout(app *server.App, children Node) Node {
 			Meta(Name("viewport"), Content("width=device-width, initial-scale=1.0")),
 			Title(Text("Welcome to Pacis")),
 
-			Link(Rel("stylesheet"), Href(server.Asset(app, "style.css"))),
-			Link(Rel("icon"), Type("image/webp"), Href(server.Asset(app, "static/favicon.webp"))),
-			Script(Type("module"), Src(server.Asset(app, "main.ts"))),
-			server.HMR(app),
+			Link(Rel("icon"), Type("image/webp"), Href("/favicon.webp")),
+			Link(Rel("stylesheet"), Href(server.Asset("/src/web/style.css"))),
+			Script(Type("module"), Src(server.Asset("/src/web/main.ts"))),
+			server.HMR(),
 			font.Head(
 				font.New("Inter", font.WeightList{font.W100, font.W900}, font.Auto, font.Latin, font.LatinExt),
 			),
@@ -31,7 +31,7 @@ func RootLayout(app *server.App, children Node) Node {
 			}),
 
 			children,
-			Script(Src(server.Asset(app, "stream.ts"))),
+			Script(Src(server.Asset("/src/web/stream.ts"))),
 		),
 	)
 }

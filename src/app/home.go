@@ -9,7 +9,7 @@ import (
 	"github.com/canpacis/pacis/server"
 )
 
-func Home(app *server.App) Node {
+func Home(*server.Server) Node {
 	return Main(
 		Div(
 			Class("relative flex h-[500px] w-full min-h-screen flex-col items-center justify-center overflow-hidden rounded-lg"),
@@ -24,7 +24,7 @@ func Home(app *server.App) Node {
 				Span(
 					Class("flex gap-2 items-center"),
 
-					Img(Src(server.Asset(app, "static/logo.webp")), Class("h-7")),
+					Img(Src("/logo.webp"), Class("h-7")),
 					H2(Class("uppercase text-2xl font-light select-none"), Text("Pacis")),
 				),
 				H1(
@@ -54,14 +54,6 @@ func Home(app *server.App) Node {
 	)
 }
 
-func MapI[E any](s []E, fn func(E, int) Node) Node {
-	children := make([]Node, len(s))
-	for i, item := range s {
-		children[i] = fn(item, i)
-	}
-	return Fragment(children...)
-}
-
 func HeroBackground(items ...Item) Node {
 	size := 64
 	vertical := 24
@@ -75,7 +67,7 @@ func HeroBackground(items ...Item) Node {
 			Height(fmt.Sprintf("%d", size*horizontal)),
 			Class("absolute size-fit"),
 
-			MapI(list, func(item struct{}, i int) Node {
+			MapIdx(list, func(item struct{}, i int) Node {
 				x := i % horizontal * size
 				y := i / horizontal * size
 

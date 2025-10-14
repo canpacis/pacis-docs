@@ -2,7 +2,7 @@ module github.com/canpacis/pacis-app
 
 go 1.24.5
 
-require github.com/canpacis/pacis v0.4.2
+require github.com/canpacis/pacis v0.5.0
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1 // indirect

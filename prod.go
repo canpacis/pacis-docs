@@ -5,24 +5,28 @@ package main
 import (
 	"embed"
 	"log"
+	"log/slog"
 
 	"github.com/canpacis/pacis/server"
-	"github.com/canpacis/pacis/server/middleware"
 )
+
+func init() {
+	options = &server.Options{
+		Env:    server.Prod,
+		Port:   ":8080",
+		Logger: slog.Default(),
+	}
+}
 
 var (
 	//go:embed build/*
 	build embed.FS
+	//go:embed build/static/.vite
+	vite embed.FS
 )
 
-func init() {
-	AppEnv = server.Prod
-	AppPort = ":8080"
-}
-
-func Ready(app *server.App) {
-	if err := app.SetBuildDir("build", build); err != nil {
+func Ready(s *server.Server) {
+	if err := s.SetBuildDir("build/static", build, vite); err != nil {
 		log.Fatal(err)
 	}
-	app.Use(middleware.DefaultColorScheme)
 }

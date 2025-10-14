@@ -3,16 +3,22 @@
 package main
 
 import (
+	"log/slog"
+	"net/url"
+
 	"github.com/canpacis/pacis/server"
-	"github.com/canpacis/pacis/server/middleware"
 )
 
 func init() {
-	AppEnv = server.Dev
-	AppPort = ":8081"
-	DevServer = "http://localhost:5173"
+	dev, _ := url.Parse("http://localhost:5173")
+	options = &server.Options{
+		Env:       server.Dev,
+		Port:      ":8081",
+		DevServer: dev,
+		Logger:    slog.Default(),
+	}
 }
 
-func Ready(app *server.App) {
-	app.Use(middleware.DefaultColorScheme)
+func Ready(s *server.Server) {
+	s.RegisterDevHandlers()
 }
