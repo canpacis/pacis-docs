@@ -19,14 +19,12 @@ func main() {
 
 	server.HandlePage("GET /", app.Home, app.RootLayout, middleware.DefaultGzip)
 	for _, doc := range app.Docs {
+		server.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
+		server.Handle("GET "+doc.Href+"/", http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		for _, link := range doc.Links {
 			server.HandlePage("GET "+link.Href, app.DocPage(options.Env, link.File), app.DocsLayout)
 		}
 	}
-	server.Handle("GET /getting-started", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
-	server.Handle("GET /getting-started/", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
-	server.Handle("GET /core-concepts/", http.RedirectHandler("/core-concepts/components", http.StatusFound))
-	server.Handle("GET /core-concepts", http.RedirectHandler("/core-concepts/components", http.StatusFound))
 
 	server.Serve()
 }

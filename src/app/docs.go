@@ -25,26 +25,26 @@ type DocLink struct {
 type DocTitle struct {
 	Label string
 	Links []DocLink
+	Href  string
 }
 
 var Docs = []DocTitle{
 	{
 		Label: "Getting Started",
+		Href:  "/getting-started",
 		Links: []DocLink{
 			{Label: "Introduction", Href: "/getting-started/introduction/", File: "introduction"},
 			{Label: "Installation", Href: "/getting-started/installation/", File: "installation"},
 			{Label: "Qucik Start", Href: "/getting-started/quick-start/", File: "quick-start"},
 			{Label: "Templating", Href: "/getting-started/templating/", File: "templating"},
-			{Label: "Tutorial", Href: "/getting-started/tutorial/", File: "tutorial"},
 			{Label: "Conventions", Href: "/getting-started/conventions/", File: "conventions"},
 		},
 	},
 	{
 		Label: "Core Concepts",
+		Href:  "/core-concepts",
 		Links: []DocLink{
 			{Label: "Components", Href: "/core-concepts/components/", File: "components"},
-			{Label: "Templates", Href: "/core-concepts/templates/", File: "templates"},
-			{Label: "Routing", Href: "/core-concepts/routing/", File: "routing"},
 			{Label: "Streaming", Href: "/core-concepts/streaming/", File: "streaming"},
 			{Label: "Caching", Href: "/core-concepts/caching/", File: "caching"},
 			{Label: "Data Fetching", Href: "/core-concepts/data-fetching/", File: "data-fetching"},
@@ -171,7 +171,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.QuoteNode:
 		element = Blockquote(Class("border-l-5 border-accent pl-2 py-2"))
 	case parser.VerbatimNode:
-		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2"))
+		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2 font-mono"))
 	case parser.ThematicBreakNode:
 		element = Hr()
 	case parser.CodeNode:

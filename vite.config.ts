@@ -10,6 +10,9 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
+    warmup: {
+      clientFiles: ["./src/web/style.css", "./src/web/*"],
+    },
     hmr: {
       port: 5173,
     },
