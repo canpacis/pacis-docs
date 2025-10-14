@@ -7,6 +7,7 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/canpacis/pacis-app/src/app"
 	"github.com/canpacis/pacis/server"
 )
 
@@ -23,10 +24,13 @@ var (
 	build embed.FS
 	//go:embed build/static/.vite
 	vite embed.FS
+	//go:embed src/app/docs
+	docs embed.FS
 )
 
 func Ready(s *server.Server) {
 	if err := s.SetBuildDir("build/static", build, vite); err != nil {
 		log.Fatal(err)
 	}
+	app.SetDocsFS(docs)
 }

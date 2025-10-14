@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"embed"
 	"log"
 	"os"
 	"strings"
@@ -178,11 +179,29 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	return element
 }
 
-func DocPage(name string) func(*server.Server) Node {
-	file, err := os.ReadFile("src/app/docs/" + name + ".md")
+var docsfs embed.FS
+
+func SetDocsFS(fs embed.FS) {
+	docsfs = fs
+}
+
+func GetDocFile(env server.Environment, name string) []byte {
+	if env == server.Dev {
+		file, err := os.ReadFile("src/app/docs/" + name + ".md")
+		if err != nil {
+			log.Fatal(err)
+		}
+		return file
+	}
+	file, err := docsfs.ReadFile("src/app/docs/" + name + ".md")
 	if err != nil {
 		log.Fatal(err)
 	}
+	return file
+}
+
+func DocPage(env server.Environment, name string) func(*server.Server) Node {
+	file := GetDocFile(env, name)
 
 	var prev *DocLink
 	var next *DocLink

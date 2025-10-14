@@ -20,7 +20,7 @@ func main() {
 	server.HandlePage("GET /", app.Home, app.RootLayout, middleware.DefaultGzip)
 	for _, doc := range app.Docs {
 		for _, link := range doc.Links {
-			server.HandlePage("GET "+link.Href, app.DocPage(link.File), app.DocsLayout)
+			server.HandlePage("GET "+link.Href, app.DocPage(options.Env, link.File), app.DocsLayout)
 		}
 	}
 	server.Handle("GET /getting-started", http.RedirectHandler("/getting-started/introduction", http.StatusFound))
