@@ -93,18 +93,22 @@ func DocsLayout(app *server.Server, children Node) Node {
 					)
 				}),
 			),
-			Article(
-				Class("flex-1 py-4 px-6 md:pl-0 md:pr-8 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0"),
+			Div(
+				Class("flex flex-col"),
 
 				Header(
-					Class("py-3 flex md:hidden items-center justify-between sticky top-0 bg-background border-b"),
+					Class("py-3 my-3 px-6 flex md:hidden items-center justify-between sticky top-0 bg-background border-b z-40"),
 
 					Div(
 						MobileNav(),
 					),
 					Logo(),
 				),
-				children,
+				Article(
+					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-full"),
+
+					children,
+				),
 			),
 		),
 		Footer(
@@ -237,7 +241,7 @@ func DocPage(env server.Environment, name string) func(*server.Server) Node {
 
 	return func(*server.Server) Node {
 		return Div(
-			Class("flex flex-col justify-between h-full gap-8"),
+			Class("flex flex-col justify-between h-full gap-8 px-6 md:pl-0 md:pr-8"),
 
 			Div(
 				Class("flex flex-col gap-8 mb-20"),
@@ -249,15 +253,17 @@ func DocPage(env server.Environment, name string) func(*server.Server) Node {
 				Class("flex flex-col gap-6 mt-auto"),
 
 				Div(
-					Class("text-sm w-full flex gap-3 items-end"),
+					Class("text-sm w-full flex flex-wrap gap-1 md:gap-3 items-end px-2"),
 
 					P(
-						Text("Do you see something wrong with this page?"),
+						Class("italic"),
+
+						Text("Something wrong with this page?"),
 					),
 					A(
 						Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s.md", name)),
 						Target("_blank"),
-						Class("flex gap-2 items-center text-sky-400"),
+						Class("flex flex-nowrap gap-2 items-center text-sky-400"),
 
 						Text("Edit It"),
 						lucide.Pen(Class("size-4")),
@@ -281,7 +287,7 @@ func DocPage(env server.Environment, name string) func(*server.Server) Node {
 func EndButtonLink(label, title, href string, forwards bool) Node {
 	return A(
 		Href(href),
-		Class("px-4 py-4 min-h-14 min-w-34 w-full md:w-fit md:min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent"),
+		Class("px-4 py-4 min-h-14 min-w-34 w-full md:w-fit md:min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent text-sm md:text-base"),
 		If(forwards, Class("ml-auto")),
 
 		Span(
@@ -314,7 +320,7 @@ func MobileNav() Node {
 	return Span(
 		x.Data(map[string]any{"open": false}),
 
-		Button(x.On("click", "open = !open"), Class("px-2 py-1"), lucide.Menu(Class("size-5"))),
+		Button(x.On("click", "open = !open"), Class("pr-2 py-1"), lucide.Menu(Class("size-5"))),
 
 		Div(
 			x.Cloak,
@@ -325,7 +331,7 @@ func MobileNav() Node {
 			Attr("x-transition:leave-start", "translate-x-0"),
 			Attr("x-transition:leave-end", "translate-x-[-60vw]"),
 			Attr("x-trap.noscroll", "open"),
-			Class("fixed top-0 left-0 bg-background border-r h-screen w-[60vw] flex transition-transform duration-500"),
+			Class("fixed z-50 top-0 left-0 bg-background border-r h-screen w-[60vw] flex transition-transform duration-500"),
 
 			Nav(
 				Class("flex flex-col w-full h-full p-4 gap-6"),

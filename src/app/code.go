@@ -187,11 +187,11 @@ func CodeComponent(language, code, name string, accsessories bool) html.Node {
 
 	return html.Div(
 		html.Attr("x-data", "{}"),
-		html.Class("text-sm p-4 bg-background border rounded-md"),
+		html.Class("text-sm p-4 bg-background border rounded-md overflow-x-auto relative z-30"),
 
 		html.If(accsessories,
 			html.Div(
-				html.Class("flex justify-between gap-4 border-b pb-1.5 mb-1.5 text-muted-foreground"),
+				html.Class("flex bg-background justify-between gap-4 border-b pb-3 mb-3 text-muted-foreground sticky top-0 left-0 w-full"),
 
 				html.P(html.Class("text-xs"), html.Text(name)),
 				html.Button(
