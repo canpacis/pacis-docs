@@ -7,9 +7,11 @@ import (
 	"net/url"
 
 	"github.com/canpacis/pacis/server"
+	"github.com/joho/godotenv"
 )
 
 func init() {
+	godotenv.Load()
 	dev, _ := url.Parse("http://localhost:5173")
 	options = &server.Options{
 		Env:       server.Dev,

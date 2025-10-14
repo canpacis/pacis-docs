@@ -9,9 +9,11 @@ import (
 
 	"github.com/canpacis/pacis-docs/src/app"
 	"github.com/canpacis/pacis/server"
+	"github.com/joho/godotenv"
 )
 
 func init() {
+	godotenv.Load()
 	options = &server.Options{
 		Env:    server.Prod,
 		Port:   ":8080",
