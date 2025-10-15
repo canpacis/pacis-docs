@@ -139,7 +139,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
 		element = A(
-			Class("text-sky-400 underline inline"),
+			Class("text-sky-400 underline inline text-wrap"),
 			Href(node.Attributes.Get("href")),
 		)
 		if strings.HasPrefix(node.Attributes.Get("href"), "https://") {
@@ -150,7 +150,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.OrderedListNode:
 		element = Ol(Class("list-decimal list-inside"))
 	case parser.ListItemNode:
-		element = Li()
+		element = Li(Class("whitespace-pre text-ellipsis overflow-hidden"))
 	case parser.HeadingNode:
 		switch node.Attributes.Get(parser.HeadingLevelKey) {
 		case "#":
