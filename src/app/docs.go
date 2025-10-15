@@ -12,6 +12,7 @@ import (
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
+	"github.com/canpacis/pacis/server/metadata"
 	"github.com/canpacis/pacis/x"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
@@ -210,6 +211,28 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	return element
 }
 
+func ExtractMetadata(node parser.TreeNode[parser.DjotNode]) (string, string) {
+	var title string
+	var desc string
+	node.Traverse(func(node parser.TreeNode[parser.DjotNode]) {
+		switch node.Type {
+		case parser.HeadingNode:
+			if (node.Attributes.Get(parser.HeadingLevelKey) == "#") && len(title) == 0 {
+				title = string(node.FullText())
+			}
+		case parser.ParagraphNode:
+			if len(desc) == 0 {
+				desc = string(node.FullText())
+				if len(desc) > 260 {
+					desc = desc[:260] + "..."
+				}
+			}
+		}
+	})
+
+	return title, desc
+}
+
 var docsfs embed.FS
 
 func SetDocsFS(fs embed.FS) {
@@ -231,70 +254,107 @@ func GetDocFile(env server.Environment, name string) []byte {
 	return file
 }
 
-func DocPage(env server.Environment, name string) func(*server.Server) Node {
-	file := GetDocFile(env, name)
+type DocPage struct {
+	File        string
+	Title       string
+	Description string
+	Markup      Node
+	Prev        *DocLink
+	Next        *DocLink
+}
 
-	var prev *DocLink
-	var next *DocLink
+func (p *DocPage) Metadata() *metadata.Metadata {
+	base := os.Getenv("WEBSITE_URL")
+
+	title := fmt.Sprintf("%s | Pacis Docs", p.Title)
+	desc := p.Description
+	image := base + "/og-image.png"
+
+	return &metadata.Metadata{
+		Title:       title,
+		Description: desc,
+		OpenGraph: &metadata.OpenGraph{
+			URL:         base,
+			Title:       title,
+			Description: desc,
+			Images: []metadata.OpenGraphMedia{
+				{URL: image},
+			},
+		},
+		Twitter: &metadata.Twitter{
+			Card:        "summary_large_image",
+			Title:       title,
+			Description: desc,
+			Images:      []string{image},
+		},
+	}
+}
+
+func (p *DocPage) Page() Node {
+	return Div(
+		Class("flex flex-col justify-between h-full gap-8 px-6 md:pl-0 md:pr-8"),
+
+		Div(
+			Class("flex flex-col gap-8 mb-20"),
+
+			p.Markup,
+		),
+
+		Div(
+			Class("flex flex-col gap-6 mt-auto"),
+
+			Div(
+				Class("text-sm w-full flex flex-wrap gap-1 md:gap-3 items-end px-2"),
+
+				P(
+					Class("italic"),
+
+					Text("Something wrong with this page?"),
+				),
+				A(
+					Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s.md", p.File)),
+					Target("_blank"),
+					Class("flex flex-nowrap gap-2 items-center text-sky-400"),
+
+					Text("Edit It"),
+					lucide.Pen(Class("size-4")),
+				),
+			),
+			Div(
+				Class("flex gap-2"),
+
+				IfFn(p.Prev != nil, func() Item {
+					return EndButtonLink("Go Back", p.Prev.Label, p.Prev.Href, false)
+				}),
+				IfFn(p.Next != nil, func() Item {
+					return EndButtonLink("Next Up", p.Next.Label, p.Next.Href, true)
+				}),
+			),
+		),
+	)
+}
+
+func NewDocPage(env server.Environment, name string) *DocPage {
+	file := GetDocFile(env, name)
+	page := &DocPage{File: name, Title: "Hello", Description: "hello"}
 
 	for _, title := range Docs {
 		for i, link := range title.Links {
 			if link.File == name {
 				if i > 0 {
-					prev = &title.Links[i-1]
+					page.Prev = &title.Links[i-1]
 				}
 				if i < len(title.Links)-1 {
-					next = &title.Links[i+1]
+					page.Next = &title.Links[i+1]
 				}
 			}
 		}
 	}
 
-	markup := BuildMarkup(parser.BuildDjotAst(file)[0])
-
-	return func(*server.Server) Node {
-		return Div(
-			Class("flex flex-col justify-between h-full gap-8 px-6 md:pl-0 md:pr-8"),
-
-			Div(
-				Class("flex flex-col gap-8 mb-20"),
-
-				markup,
-			),
-
-			Div(
-				Class("flex flex-col gap-6 mt-auto"),
-
-				Div(
-					Class("text-sm w-full flex flex-wrap gap-1 md:gap-3 items-end px-2"),
-
-					P(
-						Class("italic"),
-
-						Text("Something wrong with this page?"),
-					),
-					A(
-						Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s.md", name)),
-						Target("_blank"),
-						Class("flex flex-nowrap gap-2 items-center text-sky-400"),
-
-						Text("Edit It"),
-						lucide.Pen(Class("size-4")),
-					),
-				),
-				Div(
-					Class("flex gap-2"),
-
-					IfFn(prev != nil, func() Item {
-						return EndButtonLink("Go Back", prev.Label, prev.Href, false)
-					}),
-					IfFn(next != nil, func() Item {
-						return EndButtonLink("Next Up", next.Label, next.Href, true)
-					}),
-				),
-			),
-		)
-	}
+	node := parser.BuildDjotAst(file)[0]
+	page.Title, page.Description = ExtractMetadata(node)
+	page.Markup = BuildMarkup(node)
+	return page
 }
 
 func EndButtonLink(label, title, href string, forwards bool) Node {

@@ -4,7 +4,7 @@ go 1.24.5
 
 require (
 	github.com/alecthomas/chroma/v2 v2.20.0
-	github.com/canpacis/pacis v0.5.2
+	github.com/canpacis/pacis v0.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/sivukhin/godjot v1.0.6
 )

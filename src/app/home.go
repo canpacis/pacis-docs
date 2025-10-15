@@ -2,15 +2,52 @@ package app
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/canpacis/pacis-docs/src/icons"
 	"github.com/canpacis/pacis/components"
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
-	"github.com/canpacis/pacis/server"
+	"github.com/canpacis/pacis/server/metadata"
 )
 
-func Home(*server.Server) Node {
+type HomePage struct{}
+
+type Metadata struct {
+	URL         string
+	Title       string
+	Description string
+	Image       string
+}
+
+func (*HomePage) Metadata() *metadata.Metadata {
+	base := os.Getenv("WEBSITE_URL")
+
+	title := "Pacis | The SSR Library for Go Developers."
+	desc := "Write type-safe templates with IntelliSense support, compose reusable components that make sense. When you're ready to ship, compile everything down to one binary and deploy anywhere. Performance is built-in, caching is opt-in, and streaming is automatic."
+	image := base + "/og-image.png"
+
+	return &metadata.Metadata{
+		Title:       title,
+		Description: desc,
+		OpenGraph: &metadata.OpenGraph{
+			URL:         base,
+			Title:       title,
+			Description: desc,
+			Images: []metadata.OpenGraphMedia{
+				{URL: image},
+			},
+		},
+		Twitter: &metadata.Twitter{
+			Card:        "summary_large_image",
+			Title:       title,
+			Description: desc,
+			Images:      []string{image},
+		},
+	}
+}
+
+func (*HomePage) Page() Node {
 	return Main(
 		Div(
 			Class("relative flex h-[500px] w-full min-h-screen flex-col items-center justify-center overflow-hidden rounded-lg"),
