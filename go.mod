@@ -2,6 +2,8 @@ module github.com/canpacis/pacis-docs
 
 go 1.24.5
 
+replace github.com/canpacis/pacis => ../pacis
+
 require (
 	github.com/alecthomas/chroma/v2 v2.20.0
 	github.com/canpacis/pacis v0.6.1-0.20251015124900-5f441da8d23f

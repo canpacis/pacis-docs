@@ -19,10 +19,13 @@ func main() {
 
 	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout)
 	for _, doc := range app.Docs {
+		if len(doc.Links) == 0 {
+			continue
+		}
 		server.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		server.Handle("GET "+doc.Href+"/", http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		for _, link := range doc.Links {
-			server.HandlePage("GET "+link.Href, app.NewDocPage(options.Env, link.File), app.DocsLayout)
+			server.HandlePage("GET "+link.Href, app.NewDocPage(options.Env, doc.Folder, link.File), app.DocsLayout)
 		}
 	}
 

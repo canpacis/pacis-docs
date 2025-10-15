@@ -53,7 +53,7 @@ func (*HomePage) Page() Node {
 			Class("relative flex h-[500px] w-full min-h-screen flex-col items-center justify-center overflow-hidden rounded-lg"),
 
 			HeroBackground(
-				Class("top-0 bottom-0 m-auto skew-y-12 z-0 h-screen w-screen lg:h-auto lg:w-auto [mask-image:radial-gradient(400px_circle_at_center,white,transparent)] md:[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"),
+				Class("top-0 bottom-0 m-auto skew-y-12 z-0 h-screen w-screen lg:h-auto lg:w-auto [mask-image:radial-gradient(400px_circle_at_center,white,transparent)] md:[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]"),
 			),
 
 			Div(
@@ -102,8 +102,8 @@ func (*HomePage) Page() Node {
 
 func HeroBackground(items ...Item) Node {
 	size := 64
-	vertical := 24
-	horizontal := 24
+	vertical := 18
+	horizontal := 18
 	list := make([]struct{}, horizontal*vertical)
 
 	return El("svg",

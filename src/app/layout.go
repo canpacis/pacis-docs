@@ -19,18 +19,18 @@ type Speculation struct {
 	Prerender []SpeculationRule `json:"prerender,omitempty"`
 }
 
-func RootLayout(s *server.Server, children Node) Node {
+func RootLayout(s *server.Server, head, children Node) Node {
 	specs := Speculation{
-		Prerender: []SpeculationRule{
-			{
-				URLs:      []string{"/getting-started/introduction/", "/getting-started/installation/", "/getting-started/quick-start/"},
-				Eagerness: "immediate",
-			},
-			{
-				URLs:      []string{"/getting-started/templating/", "/getting-started/conventions/"},
-				Eagerness: "eager",
-			},
-		},
+		// Prerender: []SpeculationRule{
+		// 	{
+		// 		URLs:      []string{"/getting-started/introduction/", "/getting-started/installation/", "/getting-started/quick-start/"},
+		// 		Eagerness: "immediate",
+		// 	},
+		// 	{
+		// 		URLs:      []string{"/getting-started/templating/", "/getting-started/conventions/"},
+		// 		Eagerness: "eager",
+		// 	},
+		// },
 	}
 
 	return Fragment(
@@ -48,7 +48,7 @@ func RootLayout(s *server.Server, children Node) Node {
 				Script(Type("speculationrules"), JSON(specs)),
 				Script(Defer, Src("https://analytics.formkitt.com/script.js"), Data("website-id", "78b36665-a529-4cb2-9297-938657f8b692")),
 				s.HMR(),
-				Component(server.Head),
+				head,
 				font.Head(
 					font.New("Inter", font.WeightList{font.W100, font.W900}, font.Auto, font.Latin, font.LatinExt),
 				),

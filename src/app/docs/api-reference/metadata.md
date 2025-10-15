@@ -1,14 +1,4 @@
-# Rendering
-
-## Static Rendering
-
-Coming Soon
-
-## Partial Prerendering
-
-Coming Soon
-
-## On-Demand Rendering
+# Metadata
 
 Coming Soon
 

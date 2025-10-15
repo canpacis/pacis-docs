@@ -1,4 +1,4 @@
-package app
+package code
 
 import (
 	"bytes"
@@ -171,7 +171,7 @@ var htmlformatter = chroma.FormatterFunc(func(w io.Writer, style *chroma.Style, 
 	return nil
 })
 
-func CodeComponent(language, code, name string, accsessories bool) html.Node {
+func New(language, code, name string, accsessories bool) html.Node {
 	lexer := lexers.Get(language)
 	if lexer == nil {
 		lexer = lexers.Fallback
