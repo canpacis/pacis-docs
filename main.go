@@ -17,7 +17,7 @@ func main() {
 
 	server.Use(middleware.DefaultColorScheme)
 
-	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout, middleware.DefaultGzip)
+	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout)
 	for _, doc := range app.Docs {
 		server.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		server.Handle("GET "+doc.Href+"/", http.RedirectHandler(doc.Links[0].Href, http.StatusFound))

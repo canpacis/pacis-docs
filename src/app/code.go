@@ -159,7 +159,9 @@ var htmlformatter = chroma.FormatterFunc(func(w io.Writer, style *chroma.Style, 
 			ctx = ctxwer.ctx
 		}
 
-		for chunk := range el.Chunks() {
+		cw := html.NewChunkWriter()
+		el.Render(cw)
+		for _, chunk := range cw.Chunks() {
 			if err := html.Render(chunk, ctx, w); err != nil {
 				return err
 			}
