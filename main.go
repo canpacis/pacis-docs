@@ -17,7 +17,7 @@ func main() {
 
 	server.Use(middleware.DefaultColorScheme)
 
-	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout)
+	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout, middleware.DefaultGzip)
 	for _, doc := range app.Docs {
 		if len(doc.Links) == 0 {
 			continue
