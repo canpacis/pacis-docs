@@ -2,11 +2,9 @@ package app
 
 import (
 	"context"
-	"embed"
 	"fmt"
-	"log"
 	"os"
-	"strings"
+	"path"
 
 	"github.com/canpacis/pacis-docs/src/icons"
 	. "github.com/canpacis/pacis/html"
@@ -24,15 +22,17 @@ type DocLink struct {
 }
 
 type DocTitle struct {
-	Label string
-	Links []DocLink
-	Href  string
+	Label  string
+	Links  []DocLink
+	Folder string
+	Href   string
 }
 
 var Docs = []DocTitle{
 	{
-		Label: "Getting Started",
-		Href:  "/getting-started",
+		Label:  "Getting Started",
+		Folder: "getting-started",
+		Href:   "/getting-started",
 		Links: []DocLink{
 			{Label: "Introduction", Href: "/getting-started/introduction/", File: "introduction"},
 			{Label: "Installation", Href: "/getting-started/installation/", File: "installation"},
@@ -42,29 +42,44 @@ var Docs = []DocTitle{
 		},
 	},
 	{
-		Label: "Core Concepts",
-		Href:  "/core-concepts",
+		Label:  "Core Concepts",
+		Folder: "core-concepts",
+		Href:   "/core-concepts",
 		Links: []DocLink{
 			{Label: "Rendering", Href: "/core-concepts/rendering/", File: "rendering"},
 			{Label: "Request Data", Href: "/core-concepts/request-data/", File: "request-data"},
 			{Label: "Streaming", Href: "/core-concepts/streaming/", File: "streaming"},
+			{Label: "Routing", Href: "/core-concepts/routing/", File: "routing"},
 			{Label: "Middlewares", Href: "/core-concepts/middlewares/", File: "middlewares"},
 			{Label: "Caching", Href: "/core-concepts/caching/", File: "caching"},
 			{Label: "Assets", Href: "/core-concepts/assets/", File: "assets"},
 			{Label: "Deploying", Href: "/core-concepts/deploying/", File: "deploying"},
 		},
 	},
+	{
+		Label:  "API Reference",
+		Folder: "api-reference",
+		Href:   "/api-reference",
+		Links: []DocLink{
+			{Label: "Nodes", Href: "/api-reference/nodes/", File: "nodes"},
+			{Label: "Attributes", Href: "/api-reference/attributes/", File: "attributes"},
+			{Label: "Server", Href: "/api-reference/server/", File: "server"},
+			{Label: "Middleware", Href: "/api-reference/middleware/", File: "middleware"},
+			{Label: "Request Data", Href: "/api-reference/request-data/", File: "request-data"},
+			{Label: "Metadata", Href: "/api-reference/metadata/", File: "metadata"},
+		},
+	},
 }
 
-func DocsLayout(app *server.Server, children Node) Node {
-	return RootLayout(app, Main(
+func DocsLayout(app *server.Server, head, children Node) Node {
+	return RootLayout(app, head, Main(
 		Class("min-h-screen flex flex-col"),
 
 		Div(
 			Class("flex flex-1 max-w-6xl w-full mx-auto my-0 md:my-2 gap-6 h-full"),
 
 			Nav(
-				Class("hidden md:flex w-full flex-col max-w-[180px] h-fit lg:max-w-[224px] p-4 gap-6 sticky top-0"),
+				Class("hidden md:flex w-full flex-col max-w-[180px] h-fit lg:max-w-[224px] p-4 gap-4 sticky top-0"),
 
 				Logo(),
 
@@ -131,264 +146,6 @@ func DocsLayout(app *server.Server, children Node) Node {
 	))
 }
 
-func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
-	var element *Element
-
-	switch node.Type {
-	case parser.ParagraphNode:
-		element = P(Class("inline leading-relaxed"))
-	case parser.LinkNode:
-		element = A(
-			Class("text-sky-400 underline inline"),
-			Href(node.Attributes.Get("href")),
-		)
-		if strings.HasPrefix(node.Attributes.Get("href"), "https://") {
-			element.SetAttribute("target", "_blank")
-		}
-	case parser.UnorderedListNode:
-		element = Ul(Class("list-disc list-inside"))
-	case parser.OrderedListNode:
-		element = Ol(Class("list-decimal list-inside"))
-	case parser.ListItemNode:
-		element = Li()
-	case parser.HeadingNode:
-		switch node.Attributes.Get(parser.HeadingLevelKey) {
-		case "#":
-			element = H1(Class("text-3xl font-semibold mb-2"))
-		case "##":
-			element = H2(Class("text-2xl font-semibold mb-2"))
-		case "###":
-			element = H3(Class("text-xl font-semibold mb-2"))
-		default:
-			element = H4(Class("text-lg font-semibold mb-2"))
-		}
-	case parser.SectionNode:
-		element = Section(Class("flex flex-col gap-4"), ID(node.Attributes.Get("id")))
-	case parser.StrongNode:
-		element = Span(Class("font-semibold"))
-	case parser.SuperscriptNode:
-		element = Sup()
-	case parser.SubscriptNode:
-		element = Sub()
-	case parser.FootnoteDefNode:
-		element = Span()
-	case parser.EmphasisNode:
-		element = Span(Class("italic"))
-	case parser.ImageNode:
-		element = Img(Class("w-full rounded-lg"), Src(node.Attributes.Get("src")))
-	case parser.QuoteNode:
-		element = Blockquote(Class("border-l-5 border-accent pl-2 py-2"))
-	case parser.VerbatimNode:
-		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2 font-mono"))
-	case parser.ThematicBreakNode:
-		element = Hr()
-	case parser.CodeNode:
-		lang := node.Attributes.Get("$CodeLangKey")
-		noaccessory := node.Attributes.Get("noaccessory")
-		return CodeComponent(
-			lang,
-			string(node.FullText()),
-			node.Attributes.Get("file"),
-			lang == "go" && noaccessory != "true",
-		)
-	case parser.TextNode:
-		return Text(strings.ReplaceAll(string(node.Text), "&rsquo;", "'"))
-	default:
-		nodes := Fragment()
-		for _, child := range node.Children {
-			nodes = append(nodes, BuildMarkup(child))
-		}
-		return nodes
-	}
-
-	class := node.Attributes.Get("class")
-	if len(class) > 0 {
-		element.AddClass(class)
-	}
-	for _, child := range node.Children {
-		element.AppendNode(BuildMarkup(child))
-	}
-	return element
-}
-
-func ExtractMetadata(node parser.TreeNode[parser.DjotNode]) (string, string) {
-	var title string
-	var desc string
-	node.Traverse(func(node parser.TreeNode[parser.DjotNode]) {
-		switch node.Type {
-		case parser.HeadingNode:
-			if (node.Attributes.Get(parser.HeadingLevelKey) == "#") && len(title) == 0 {
-				title = string(node.FullText())
-			}
-		case parser.ParagraphNode:
-			if len(desc) == 0 {
-				desc = string(node.FullText())
-				if len(desc) > 260 {
-					desc = desc[:260] + "..."
-				}
-			}
-		}
-	})
-
-	return title, desc
-}
-
-var docsfs embed.FS
-
-func SetDocsFS(fs embed.FS) {
-	docsfs = fs
-}
-
-func GetDocFile(env server.Environment, name string) []byte {
-	if env == server.Dev {
-		file, err := os.ReadFile("src/app/docs/" + name + ".md")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return file
-	}
-	file, err := docsfs.ReadFile("src/app/docs/" + name + ".md")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return file
-}
-
-type DocPage struct {
-	File        string
-	Title       string
-	Description string
-	Markup      Node
-	Prev        *DocLink
-	Next        *DocLink
-}
-
-func (p *DocPage) Metadata() *metadata.Metadata {
-	base := os.Getenv("WEBSITE_URL")
-
-	title := fmt.Sprintf("%s | Pacis Docs", p.Title)
-	desc := p.Description
-	image := base + "/og-image.png"
-
-	return &metadata.Metadata{
-		Title:       title,
-		Description: desc,
-		OpenGraph: &metadata.OpenGraph{
-			URL:         base,
-			Title:       title,
-			Description: desc,
-			Images: []metadata.OpenGraphMedia{
-				{URL: image},
-			},
-		},
-		Twitter: &metadata.Twitter{
-			Card:        "summary_large_image",
-			Title:       title,
-			Description: desc,
-			Images:      []string{image},
-		},
-	}
-}
-
-func (p *DocPage) Page() Node {
-	return Div(
-		Class("flex flex-col justify-between h-full gap-8 px-6 md:pl-0 md:pr-8"),
-
-		Div(
-			Class("flex flex-col gap-8 mb-20"),
-
-			p.Markup,
-		),
-
-		Div(
-			Class("flex flex-col gap-6 mt-auto"),
-
-			Div(
-				Class("text-sm w-full flex flex-wrap gap-1 md:gap-3 items-end px-2"),
-
-				P(
-					Class("italic"),
-
-					Text("Something wrong with this page?"),
-				),
-				A(
-					Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s.md", p.File)),
-					Target("_blank"),
-					Class("flex flex-nowrap gap-2 items-center text-sky-400"),
-
-					Text("Edit It"),
-					lucide.Pen(Class("size-4")),
-				),
-			),
-			Div(
-				Class("flex gap-2"),
-
-				IfFn(p.Prev != nil, func() Item {
-					return EndButtonLink("Go Back", p.Prev.Label, p.Prev.Href, false)
-				}),
-				IfFn(p.Next != nil, func() Item {
-					return EndButtonLink("Next Up", p.Next.Label, p.Next.Href, true)
-				}),
-			),
-		),
-	)
-}
-
-func NewDocPage(env server.Environment, name string) *DocPage {
-	file := GetDocFile(env, name)
-	page := &DocPage{File: name, Title: "Hello", Description: "hello"}
-
-	for _, title := range Docs {
-		for i, link := range title.Links {
-			if link.File == name {
-				if i > 0 {
-					page.Prev = &title.Links[i-1]
-				}
-				if i < len(title.Links)-1 {
-					page.Next = &title.Links[i+1]
-				}
-			}
-		}
-	}
-
-	node := parser.BuildDjotAst(file)[0]
-	page.Title, page.Description = ExtractMetadata(node)
-	page.Markup = BuildMarkup(node)
-	return page
-}
-
-func EndButtonLink(label, title, href string, forwards bool) Node {
-	return A(
-		Href(href),
-		Class("px-4 py-4 min-h-14 min-w-34 w-full md:w-fit md:min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent text-sm md:text-base"),
-		If(forwards, Class("ml-auto")),
-
-		Span(
-			Class("text-xs mb-1"),
-			If(!forwards, Class("ml-auto")),
-
-			Text(label),
-		),
-		Span(
-			Class("flex justify-between items-center"),
-
-			If(!forwards, lucide.ArrowLeft(Class("size-5"))),
-			P(Class("font-semibold"), Text(title)),
-			If(forwards, lucide.ArrowRight(Class("size-5"))),
-		),
-	)
-}
-
-func Logo() Node {
-	return A(
-		Class("flex flex-row-reverse md:flex-row gap-2 items-center"),
-		Href("/"),
-
-		Img(Src("/logo.webp"), Class("h-7")),
-		Span(Class("uppercase text-lg font-light select-none"), Text("Pacis")),
-	)
-}
-
 func MobileNav() Node {
 	return Span(
 		x.Data(map[string]any{"open": false}),
@@ -440,4 +197,151 @@ func MobileNav() Node {
 			),
 		),
 	)
+}
+
+var Version string = os.Getenv("VERSION")
+
+func Logo() Node {
+	return A(
+		Class("flex flex-row-reverse md:flex-row gap-3 items-center hover:bg-accent rounded-md px-4 md:px-2 h-14"),
+		Href("/"),
+
+		Img(Src("/logo.webp"), Class("h-8")),
+		Span(
+			Class("flex flex-col items-end md:items-start"),
+
+			Span(Class("uppercase text-base font-light select-none"), Text("Pacis")),
+			Span(Class("text-xs text-muted-foreground md:block"), Text(Version)),
+		),
+	)
+}
+
+type DocPage struct {
+	File        string
+	DocTitle    *DocTitle
+	Title       string
+	Description string
+	Markup      Node
+	Prev        *DocLink
+	Next        *DocLink
+}
+
+func (p *DocPage) Metadata() *metadata.Metadata {
+	base := os.Getenv("WEBSITE_URL")
+
+	title := fmt.Sprintf("%s - %s | Pacis Docs", p.Title, p.DocTitle.Label)
+	desc := p.Description
+	image := base + "/og-image.png"
+
+	return &metadata.Metadata{
+		Title:       title,
+		Description: desc,
+		OpenGraph: &metadata.OpenGraph{
+			URL:         base,
+			Title:       title,
+			Description: desc,
+			Images: []metadata.OpenGraphMedia{
+				{URL: image},
+			},
+		},
+		Twitter: &metadata.Twitter{
+			Card:        "summary_large_image",
+			Title:       title,
+			Description: desc,
+			Images:      []string{image},
+		},
+	}
+}
+
+func (p *DocPage) Page() Node {
+	return Div(
+		Class("flex flex-col justify-between h-full gap-8 px-6 md:pl-0 md:pr-8"),
+
+		Div(
+			Class("flex flex-col gap-8 mb-20"),
+
+			p.Markup,
+		),
+
+		Div(
+			Class("flex flex-col gap-6 mt-auto"),
+
+			Div(
+				Class("text-sm w-full flex flex-wrap gap-1 md:gap-3 items-end px-2"),
+
+				P(
+					Class("italic"),
+
+					Text("Something wrong with this page?"),
+				),
+				A(
+					Href(fmt.Sprintf("https://github.com/canpacis/pacis-docs/edit/main/src/app/docs/%s/%s.md", p.DocTitle.Folder, p.File)),
+					Target("_blank"),
+					Class("flex flex-nowrap gap-2 items-center text-sky-400"),
+
+					Text("Edit It"),
+					lucide.Pen(Class("size-4")),
+				),
+			),
+			Div(
+				Class("flex gap-2"),
+
+				IfFn(p.Prev != nil, func() Item {
+					return EndButtonLink("Go Back", p.Prev.Label, p.Prev.Href, false)
+				}),
+				IfFn(p.Next != nil, func() Item {
+					return EndButtonLink("Next Up", p.Next.Label, p.Next.Href, true)
+				}),
+			),
+		),
+	)
+}
+
+func EndButtonLink(label, title, href string, forwards bool) Node {
+	return A(
+		Href(href),
+		Class("px-4 py-4 min-h-14 min-w-34 w-full md:w-fit md:min-w-56 flex flex-col justify-center rounded-md border hover:bg-accent hover:border-transparent text-sm md:text-base"),
+		If(forwards, Class("ml-auto")),
+
+		Span(
+			Class("text-xs mb-1"),
+			If(!forwards, Class("ml-auto")),
+
+			Text(label),
+		),
+		Span(
+			Class("flex justify-between items-center"),
+
+			If(!forwards, lucide.ArrowLeft(Class("size-5"))),
+			P(Class("font-semibold"), Text(title)),
+			If(forwards, lucide.ArrowRight(Class("size-5"))),
+		),
+	)
+}
+
+func NewDocPage(env server.Environment, doc, name string) *DocPage {
+	page := &DocPage{File: name, Title: "Hello", Description: "hello"}
+
+	for _, title := range Docs {
+		if title.Folder != doc {
+			continue
+		}
+		for i, link := range title.Links {
+			if link.File == name {
+				page.DocTitle = &title
+				if i > 0 {
+					page.Prev = &title.Links[i-1]
+				}
+				if i < len(title.Links)-1 {
+					page.Next = &title.Links[i+1]
+				}
+			}
+		}
+	}
+
+	file := GetDocFile(env, path.Join(doc, name))
+	node := parser.BuildDjotAst(file)[0]
+	page.Title, page.Description = ExtractMetadata(node)
+	page.Markup = BuildMarkup(node)
+	return page
 }

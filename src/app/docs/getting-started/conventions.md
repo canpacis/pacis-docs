@@ -31,7 +31,7 @@ The template comes with the following structure.
             └── main.ts/
 ```
 
-A typical Pacis app would follow this by adding any ui or business logic related code inside the `src/app` directory. Your public files should go in the `public` directory and your frontend assets like scripts and styles should be in `src/app/web` directory.
+A typical Pacis app would follow this by adding any ui or business logic related code inside the `src/` directory. Your public files should go in the `public/` directory and your frontend assets like scripts and styles should be in `src/web/` directory.
 
 In the end, your app might look like this:
 
@@ -87,7 +87,7 @@ func New() Node {
 
 HTML elements defined in the `html` package accept a variadic item of `html.Iten` interfaces. This includes HTML attributes like `class`, `id` and `src` while also acommodating other HTML elements and nodes like, `Text` and `Fragment`.
 
-Having every item in the same argument list, especially when building a complex, nested UI, can get really confusing really quick. To minimize, I advise keeping your HTML attributes from your child nodes.
+Having every item in the same argument list, especially when building a complex, nested UIs, can get really confusing really quick. To minimize, I advise keeping your HTML attributes apart from your child nodes.
 
 No ❌
 

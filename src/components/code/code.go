@@ -1,4 +1,4 @@
-package app
+package code
 
 import (
 	"bytes"
@@ -159,7 +159,9 @@ var htmlformatter = chroma.FormatterFunc(func(w io.Writer, style *chroma.Style, 
 			ctx = ctxwer.ctx
 		}
 
-		for chunk := range el.Chunks() {
+		cw := html.NewChunkWriter()
+		el.Render(cw)
+		for _, chunk := range cw.Chunks() {
 			if err := html.Render(chunk, ctx, w); err != nil {
 				return err
 			}
@@ -169,7 +171,7 @@ var htmlformatter = chroma.FormatterFunc(func(w io.Writer, style *chroma.Style, 
 	return nil
 })
 
-func CodeComponent(language, code, name string, accsessories bool) html.Node {
+func New(language, code, name string, accsessories bool) html.Node {
 	lexer := lexers.Get(language)
 	if lexer == nil {
 		lexer = lexers.Fallback
