@@ -96,8 +96,8 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 									A(
 										Class("bg-background hover:bg-accent w-full h-7 flex text-sm rounded-md px-3 items-center data-[state=active]:bg-accent"),
 										DeferredAttr("data-state", func(ctx context.Context) string {
-											detail := server.Detail(ctx)
-											if detail.URL.Path == link.Href {
+											detail, err := server.Detail(ctx)
+											if err == nil && detail.URL.Path == link.Href {
 												return "active"
 											}
 											return ""
@@ -179,8 +179,8 @@ func MobileNav() Node {
 									A(
 										Class("hover:bg-accent w-full h-8 flex text-sm rounded-md px-3 items-center data-[state=active]:bg-accent"),
 										DeferredAttr("data-state", func(ctx context.Context) string {
-											detail := server.Detail(ctx)
-											if detail.URL.Path == link.Href {
+											detail, err := server.Detail(ctx)
+											if err == nil && detail.URL.Path == link.Href {
 												return "active"
 											}
 											return ""
