@@ -14,6 +14,8 @@ github.com/canpacis/http-payload v0.3.1 h1:GfDEp+LSP5EbUROQcGJdfUFqyDGNNdTto4bC2
 github.com/canpacis/http-payload v0.3.1/go.mod h1:NT+lGXUd6wWFZj6kVZmjzExQwMcQB3BXIABh02oIyzA=
 github.com/canpacis/pacis v0.6.2 h1:6+vNK/jvvQDMp4dEGzJaO+eZ6wMaKVovDZa6r/8byzY=
 github.com/canpacis/pacis v0.6.2/go.mod h1:l07fWQ1M1TdQ9NOFtV8L627D64GR0NZBThQeA1BMBTo=
+github.com/canpacis/pacis v0.6.5-0.20251018140617-51d4c3378d40 h1:jgbvhzZdmzIw8sBPF1c22oQZdD2fmfdw0rnVhJvB8Gw=
+github.com/canpacis/pacis v0.6.5-0.20251018140617-51d4c3378d40/go.mod h1:l07fWQ1M1TdQ9NOFtV8L627D64GR0NZBThQeA1BMBTo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

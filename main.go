@@ -17,17 +17,21 @@ func main() {
 
 	server.Use(middleware.DefaultColorScheme)
 
-	server.HandlePage("GET /", &app.HomePage{}, app.RootLayout, middleware.DefaultGzip)
+	server.HandlePage("/", &app.HomePage{}, app.RootLayout, middleware.DefaultGzip)
 	for _, doc := range app.Docs {
 		if len(doc.Links) == 0 {
 			continue
 		}
 		server.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
-		server.Handle("GET "+doc.Href+"/", http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		for _, link := range doc.Links {
-			server.HandlePage("GET "+link.Href, app.NewDocPage(options.Env, doc.Folder, link.File), app.DocsLayout)
+			server.HandlePage(link.Href, app.NewDocPage(options.Env, doc.Folder, link.File), app.DocsLayout)
 		}
 	}
+	server.Handle("GET /docs", http.RedirectHandler("/getting-started", http.StatusFound))
+	server.Handle("GET /docs/", http.RedirectHandler("/getting-started", http.StatusFound))
+	server.Handle("GET /docs/{title}/", http.RedirectHandler("/getting-started", http.StatusFound))
+	server.Handle("GET /docs/{title}/{doc}", http.RedirectHandler("/getting-started", http.StatusFound))
+	server.Handle("GET /docs/{title}/{doc}/", http.RedirectHandler("/getting-started", http.StatusFound))
 
 	server.Serve()
 }
