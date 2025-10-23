@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"components/ui/button"
+
 	"github.com/canpacis/pacis-docs/src/icons"
 	"github.com/canpacis/pacis/components"
 	. "github.com/canpacis/pacis/html"
@@ -23,7 +25,7 @@ type Metadata struct {
 func (*HomePage) Metadata() *metadata.Metadata {
 	base := os.Getenv("WEBSITE_URL")
 
-	title := "Pacis | The SSR Library for Go Developers."
+	title := "Pacis | The Web Dev-Kit for Go Developers."
 	desc := "Write type-safe templates with IntelliSense support, compose reusable components that make sense. When you're ready to ship, compile everything down to one binary and deploy anywhere. Performance is built-in, caching is opt-in, and streaming is automatic."
 	image := base + "/og-image.png"
 
@@ -62,13 +64,13 @@ func (*HomePage) Page() Node {
 				Span(
 					Class("flex gap-2 items-center"),
 
-					Img(Src("/logo.webp"), Class("h-7")),
+					Img(Src("/icon.svg"), Class("h-7")),
 					H2(Class("uppercase text-2xl font-light select-none"), Text("Pacis")),
 				),
 				H1(
 					Class("text-3xl md:text-5xl font-black"),
 
-					Text("The SSR Library for Go Developers."),
+					Text("The Web Dev Kit for Go Developers."),
 				),
 				P(
 					Class("font-medium"),
@@ -79,20 +81,26 @@ func (*HomePage) Page() Node {
 				Div(
 					Class("flex justify-center gap-4"),
 
-					A(
-						Class("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2"),
-						Href("https://github.com/canpacis/pacis"),
-						Target("_blank"),
+					button.New(
+						components.AsChild, button.Secondary,
 
-						icons.GithubMark(),
-						Text("Github"),
+						A(
+							Href("https://github.com/canpacis/pacis"),
+							Target("_blank"),
+
+							icons.GithubMark(),
+							Text("Github"),
+						),
 					),
-					A(
-						Class("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2"),
-						Href("/getting-started"),
+					button.New(
+						components.AsChild,
 
-						Text("Get Started"),
-						lucide.ArrowUpRight(),
+						A(
+							Href("/getting-started"),
+
+							Text("Get Started"),
+							lucide.ArrowUpRight(),
+						),
 					),
 				),
 			),

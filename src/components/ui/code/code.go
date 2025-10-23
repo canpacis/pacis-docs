@@ -2,9 +2,11 @@ package code
 
 import (
 	"bytes"
+	"components/ui/toast"
 	"context"
 	"io"
 	"log"
+	"time"
 
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
@@ -197,6 +199,8 @@ func New(language, code, name string, accsessories bool) html.Node {
 
 				html.P(html.Class("text-xs"), html.Text(name)),
 				html.Button(
+					toast.New("Copied", time.Second*2),
+					toast.Show,
 					x.On("click", "navigator.clipboard.writeText($refs.code.innerText)"),
 
 					lucide.Copy(html.Class("size-4")),

@@ -4,10 +4,14 @@ import (
 	"embed"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
-	"github.com/canpacis/pacis-docs/src/components/code"
+	"components/ui/code"
+	"components/ui/kbd"
+
 	. "github.com/canpacis/pacis/html"
+	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
@@ -17,15 +21,25 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 
 	switch node.Type {
 	case parser.ParagraphNode:
+		preview := node.Attributes.Get("preview")
+		if len(preview) != 0 {
+			idxstr := node.Attributes.Get("index")
+			idx, err := strconv.Atoi(idxstr)
+			if err != nil {
+				return P(Textf("Failed to render preview: %s", err))
+			}
+			return Preview(previews[preview][idx])
+		}
 		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
-		element = A(
-			Class("text-sky-400 underline inline break-all"),
+		return A(
+			Class("text-sky-400 inline-flex items-center gap-1"),
 			Href(node.Attributes.Get("href")),
+			If(strings.HasPrefix(node.Attributes.Get("href"), "https://"), Target("_blank")),
+
+			Text(node.FullText()),
+			lucide.ArrowUpRight(Class("size-4")),
 		)
-		if strings.HasPrefix(node.Attributes.Get("href"), "https://") {
-			element.SetAttribute("target", "_blank")
-		}
 	case parser.UnorderedListNode:
 		element = Ul(Class("list-disc list-inside"))
 	case parser.OrderedListNode:
@@ -68,7 +82,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.QuoteNode:
 		element = Blockquote(Class("border-l-5 border-accent pl-2 py-2"))
 	case parser.VerbatimNode:
-		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2 font-mono"))
+		element = kbd.New(Class("font-mono")).(*Element)
 	case parser.ThematicBreakNode:
 		element = Hr()
 	case parser.CodeNode:

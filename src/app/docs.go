@@ -6,6 +6,9 @@ import (
 	"os"
 	"path"
 
+	"components/ui/sheet"
+	"components/ui/view"
+
 	"github.com/canpacis/pacis-docs/src/icons"
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
@@ -51,7 +54,6 @@ var Docs = []DocTitle{
 			{Label: "Streaming", Href: "/core-concepts/streaming/", File: "streaming"},
 			{Label: "Routing", Href: "/core-concepts/routing/", File: "routing"},
 			{Label: "Middlewares", Href: "/core-concepts/middlewares/", File: "middlewares"},
-			{Label: "Caching", Href: "/core-concepts/caching/", File: "caching"},
 			{Label: "Assets", Href: "/core-concepts/assets/", File: "assets"},
 			{Label: "Deploying", Href: "/core-concepts/deploying/", File: "deploying"},
 		},
@@ -69,6 +71,14 @@ var Docs = []DocTitle{
 			{Label: "Metadata", Href: "/api-reference/metadata/", File: "metadata"},
 		},
 	},
+	// {
+	// 	Label:  "Components",
+	// 	Folder: "components",
+	// 	Href:   "/components",
+	// 	Links: []DocLink{
+	// 		{Label: "Alert", Href: "/components/alert/", File: "alert"},
+	// 	},
+	// },
 }
 
 func DocsLayout(app *server.Server, head, children Node) Node {
@@ -79,6 +89,7 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 			Class("flex flex-1 max-w-6xl w-full mx-auto my-0 md:my-2 gap-6 h-full"),
 
 			Nav(
+				view.Name("navigation"),
 				Class("hidden md:flex w-full flex-col max-w-[180px] h-fit lg:max-w-[224px] p-4 gap-4 sticky top-0"),
 
 				Logo(),
@@ -113,18 +124,60 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 				}),
 			),
 			Div(
+				x.Data(map[string]any{"sheetOpen": false}),
 				Class("flex flex-col w-full"),
 
 				Header(
-					Class("py-3 my-3 px-6 flex md:hidden items-center justify-between sticky top-0 bg-background border-b z-40"),
+					x.Bind("data-sheet-state", "sheetOpen ? 'open' : 'closed'"),
+					Class("pt-3 px-6 flex md:hidden items-center justify-between top-0 bg-background border-b z-40 data-[sheet-state='open']:fixed data-[sheet-state='open']:w-screen data-[sheet-state='closed']:sticky"),
 
-					Div(
-						MobileNav(),
+					sheet.New(
+						x.On("open", "sheetOpen = true"),
+						x.On("closed", "sheetOpen = false"),
+						sheet.Trigger(lucide.Menu(Class("size-5"))),
+						sheet.Content(
+							sheet.Left,
+							Class("max-h-screen overflow-y-auto"),
+
+							Nav(
+								Class("flex flex-col w-full h-full p-4 gap-6"),
+
+								Map(Docs, func(title DocTitle) Node {
+									return Div(
+										Class("flex flex-col gap-2"),
+
+										P(Class("font-semibold"), Text(title.Label)),
+										Ul(
+											Class("flex flex-col gap-0.5"),
+
+											Map(title.Links, func(link DocLink) Node {
+												return Li(
+													A(
+														Class("hover:bg-accent w-full h-8 flex text-sm rounded-md px-3 items-center data-[state=active]:bg-accent"),
+														DeferredAttr("data-state", func(ctx context.Context) string {
+															detail, err := server.Detail(ctx)
+															if err == nil && detail.URL.Path == link.Href {
+																return "active"
+															}
+															return ""
+														}),
+														Href(link.Href),
+
+														Text(link.Label),
+													),
+												)
+											}),
+										),
+									)
+								}),
+							),
+						),
 					),
 					Logo(),
 				),
 				Article(
-					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-auto"),
+					x.Bind("data-sheet-state", "sheetOpen ? 'open' : 'closed'"),
+					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-auto data-[sheet-state='open']:mt-[69px]"),
 
 					children,
 				),
@@ -146,59 +199,6 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 	))
 }
 
-func MobileNav() Node {
-	return Span(
-		x.Data(map[string]any{"open": false}),
-
-		Button(x.On("click", "open = !open"), Class("pr-2 py-1"), lucide.Menu(Class("size-5"))),
-
-		Div(
-			x.Cloak,
-			x.Show("open"),
-			x.On("click", "open = false", x.Outside),
-			Attr("x-transition:enter-start", "translate-x-[-60vw]"),
-			Attr("x-transition:enter-end", "translate-x-0"),
-			Attr("x-transition:leave-start", "translate-x-0"),
-			Attr("x-transition:leave-end", "translate-x-[-60vw]"),
-			Attr("x-trap.noscroll", "open"),
-			Class("fixed z-50 top-0 left-0 bg-background border-r h-screen w-[60vw] flex transition-transform duration-500"),
-
-			Nav(
-				Class("flex flex-col w-full h-full p-4 gap-6"),
-
-				Map(Docs, func(title DocTitle) Node {
-					return Div(
-						Class("flex flex-col gap-2"),
-
-						P(Class("font-semibold"), Text(title.Label)),
-						Ul(
-							Class("flex flex-col gap-0.5"),
-
-							Map(title.Links, func(link DocLink) Node {
-								return Li(
-									A(
-										Class("hover:bg-accent w-full h-8 flex text-sm rounded-md px-3 items-center data-[state=active]:bg-accent"),
-										DeferredAttr("data-state", func(ctx context.Context) string {
-											detail, err := server.Detail(ctx)
-											if err == nil && detail.URL.Path == link.Href {
-												return "active"
-											}
-											return ""
-										}),
-										Href(link.Href),
-
-										Text(link.Label),
-									),
-								)
-							}),
-						),
-					)
-				}),
-			),
-		),
-	)
-}
-
 var Version string = os.Getenv("VERSION")
 
 func Logo() Node {
@@ -206,7 +206,7 @@ func Logo() Node {
 		Class("flex flex-row-reverse md:flex-row gap-3 items-center hover:bg-accent rounded-md px-4 md:px-2 h-14"),
 		Href("/"),
 
-		Img(Src("/logo.webp"), Class("h-8")),
+		Img(Src("/icon.svg"), Class("h-8")),
 		Span(
 			Class("flex flex-col items-end md:items-start"),
 

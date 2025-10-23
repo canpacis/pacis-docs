@@ -21,7 +21,7 @@ export default defineConfig({
     manifest: true,
     lib: {
       entry: {
-        script: resolve(__dirname, "src/web/main.ts"),
+        main: resolve(__dirname, "src/web/main.ts"),
         stream: resolve(__dirname, "src/web/stream.ts"),
         style: resolve(__dirname, "src/web/style.css"),
       },
