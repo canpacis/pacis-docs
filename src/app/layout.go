@@ -24,6 +24,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 		Prerender: []SpeculationRule{
 			{
 				URLs: []string{
+					"/",
 					"/getting-started/introduction/",
 					"/getting-started/installation/",
 					"/getting-started/quick-start/",
@@ -36,6 +37,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 					"/core-concepts/middlewares/",
 					"/core-concepts/assets/",
 					"/core-concepts/deploying/",
+					"/api-reference/nodes/",
 				},
 				Eagerness: "eager",
 			},

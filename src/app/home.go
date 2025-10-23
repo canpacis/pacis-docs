@@ -96,7 +96,7 @@ func (*HomePage) Page() Node {
 						components.AsChild,
 
 						A(
-							Href("/getting-started"),
+							Href("/getting-started/introduction/"),
 
 							Text("Get Started"),
 							lucide.ArrowUpRight(),

@@ -17,6 +17,8 @@ require (
 	github.com/alecthomas/chroma/v2 v2.20.0 // indirect
 	github.com/canpacis/http-payload v0.3.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
+	github.com/gosimple/slug v1.15.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.6.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 )
