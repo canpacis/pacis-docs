@@ -49,7 +49,7 @@ func HomePage(*server.Server) Node {
   return Div(
     Class("min-h-screen flex flex-col items-center justify-center"),
 
-    Img(Src("/logo.webp"), Class("h-16")),
+    Img(Src("/icon.svg"), Class("h-16")),
     H1(
       Class("text-4xl font-bold my-4"),
 

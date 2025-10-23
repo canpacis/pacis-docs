@@ -11,27 +11,28 @@ import (
 var options *server.Options
 
 func main() {
-	server := server.New(options)
+	srv := server.New(options)
 
-	Ready(server)
+	Ready(srv)
 
-	server.Use(middleware.DefaultColorScheme)
+	srv.Use(middleware.DefaultColorScheme)
 
-	server.HandlePage("/", &app.HomePage{}, app.RootLayout, middleware.DefaultGzip)
+	gzip := middleware.DefaultGzip(options.Env == server.Dev)
+	srv.HandlePage("/", &app.HomePage{}, app.RootLayout, gzip)
 	for _, doc := range app.Docs {
 		if len(doc.Links) == 0 {
 			continue
 		}
-		server.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
+		srv.Handle("GET "+doc.Href, http.RedirectHandler(doc.Links[0].Href, http.StatusFound))
 		for _, link := range doc.Links {
-			server.HandlePage(link.Href, app.NewDocPage(options.Env, doc.Folder, link.File), app.DocsLayout)
+			srv.HandlePage(link.Href, app.NewDocPage(options.Env, doc.Folder, link.File), app.DocsLayout, gzip)
 		}
 	}
-	server.Handle("GET /docs", http.RedirectHandler("/getting-started", http.StatusFound))
-	server.Handle("GET /docs/", http.RedirectHandler("/getting-started", http.StatusFound))
-	server.Handle("GET /docs/{title}/", http.RedirectHandler("/getting-started", http.StatusFound))
-	server.Handle("GET /docs/{title}/{doc}", http.RedirectHandler("/getting-started", http.StatusFound))
-	server.Handle("GET /docs/{title}/{doc}/", http.RedirectHandler("/getting-started", http.StatusFound))
+	srv.Handle("GET /docs", http.RedirectHandler("/getting-started", http.StatusFound))
+	srv.Handle("GET /docs/", http.RedirectHandler("/getting-started", http.StatusFound))
+	srv.Handle("GET /docs/{title}/", http.RedirectHandler("/getting-started", http.StatusFound))
+	srv.Handle("GET /docs/{title}/{doc}", http.RedirectHandler("/getting-started", http.StatusFound))
+	srv.Handle("GET /docs/{title}/{doc}/", http.RedirectHandler("/getting-started", http.StatusFound))
 
-	server.Serve()
+	srv.Serve()
 }

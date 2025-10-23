@@ -54,7 +54,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 			),
 			Body(
 				DeferredAttr("class", func(ctx context.Context) string {
-					return middleware.GetColorScheme(ctx)
+					return middleware.GetColorScheme(ctx) + " w-screen overflow-x-hidden"
 				}),
 
 				children,

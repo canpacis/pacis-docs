@@ -4,9 +4,11 @@ import (
 	"embed"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
-	"github.com/canpacis/pacis-docs/src/components/code"
+	"components/ui/code"
+
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/server"
 	parser "github.com/sivukhin/godjot/djot_parser"
@@ -17,6 +19,15 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 
 	switch node.Type {
 	case parser.ParagraphNode:
+		preview := node.Attributes.Get("preview")
+		if len(preview) != 0 {
+			idxstr := node.Attributes.Get("index")
+			idx, err := strconv.Atoi(idxstr)
+			if err != nil {
+				return P(Textf("Failed to render preview: %s", err))
+			}
+			return Preview(previews[preview][idx])
+		}
 		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
 		element = A(

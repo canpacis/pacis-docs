@@ -21,6 +21,7 @@ FROM golang:1.24-alpine AS backend-deps
 WORKDIR /app
 
 COPY go.mod go.sum ./
+COPY /src/components ./src/components
 RUN go mod download
 
 FROM golang:1.24-alpine AS backend-build
