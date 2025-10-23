@@ -6,7 +6,7 @@ I prefer to _dot_ import the `github.com/canpacis/pacis/html` package, which is 
 
 Importing the package this way lets you use its functions without prefixing them with the `html.` namespace and makes it easier to develop.
 
-Go's `staticcheck` linter will probably yell at you for doing this[^staticcheck]. Updating your `staticcheck.conf` file to include the package name will resolve the issue. The template repository comes with a configured file for you.
+Go's `staticcheck` linter will probably [yell](https://staticcheck.dev/docs/checks/#ST1001) at you for doing this. Updating your `staticcheck.conf` file to include the package name will resolve the issue. The template repository comes with a configured file for you.
 
 ```conf
 dot_import_whitelist = ["github.com/canpacis/pacis/html"]
@@ -137,6 +137,3 @@ OK ✅
 ```go
 P(Class(...), Text(...))
 ```
-
-
-[^staticcheck]:[https://staticcheck.dev/docs/checks/#ST1001](https://staticcheck.dev/docs/checks/#ST1001)

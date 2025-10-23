@@ -33,7 +33,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
 		return A(
-			Class("text-sky-400 inline-flex items-center gap-1 break-all"),
+			Class("text-sky-400 inline-flex items-center gap-1"),
 			Href(node.Attributes.Get("href")),
 			If(strings.HasPrefix(node.Attributes.Get("href"), "https://"), Target("_blank")),
 

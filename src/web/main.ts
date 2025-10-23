@@ -171,7 +171,7 @@ Alpine.data("toast", (message: string = "", duration: number = 2000) => ({
       message: message,
       duration: duration,
       className:
-        "border rounded-md shadow-lg animate-in fade-in w-64 p-4 text-sm cursor-default",
+        "border bg-background rounded-md shadow-lg animate-in fade-in w-64 p-4 text-sm cursor-default",
     });
   },
 }));

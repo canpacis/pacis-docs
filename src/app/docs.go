@@ -13,6 +13,7 @@ import (
 	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
 	"github.com/canpacis/pacis/server/metadata"
+	"github.com/canpacis/pacis/x"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
 
@@ -121,15 +122,20 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 				}),
 			),
 			Div(
+				x.Data(map[string]any{"sheetOpen": false}),
 				Class("flex flex-col w-full"),
 
 				Header(
-					Class("py-1 my-3 px-6 flex md:hidden items-center justify-between sticky top-0 bg-background border-b z-40"),
+					x.Bind("data-sheet-state", "sheetOpen ? 'open' : 'closed'"),
+					Class("pt-3 px-6 flex md:hidden items-center justify-between top-0 bg-background border-b z-40 data-[sheet-state='open']:fixed data-[sheet-state='open']:w-screen data-[sheet-state='closed']:sticky"),
 
 					sheet.New(
+						x.On("open", "sheetOpen = true"),
+						x.On("closed", "sheetOpen = false"),
 						sheet.Trigger(lucide.Menu(Class("size-5"))),
 						sheet.Content(
 							sheet.Left,
+							Class("max-h-screen overflow-y-auto"),
 
 							Nav(
 								Class("flex flex-col w-full h-full p-4 gap-6"),
@@ -168,7 +174,8 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 					Logo(),
 				),
 				Article(
-					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-auto"),
+					x.Bind("data-sheet-state", "sheetOpen ? 'open' : 'closed'"),
+					Class("flex-1 py-4 mb-4 md:mb-0 flex flex-col gap-6 md:gap-0 w-screen md:w-auto data-[sheet-state='open']:mt-[69px]"),
 
 					children,
 				),

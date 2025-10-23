@@ -114,11 +114,24 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  [x-cloak] {
+    @apply !hidden;
+  }
+
+  .notyf {
+    @apply flex flex-col gap-2 fixed bottom-4 right-4 w-screen z-50 !items-center md:!items-end;
   }
 }

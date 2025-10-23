@@ -103,7 +103,7 @@ func Content(items ...html.Item) html.Node {
 		x.Bind("data-state", "opened ? 'open' : 'closed'"),
 
 		html.Data("slot", "sheet-content"),
-		html.Attr("x-trap", "opened"),
+		html.Attr("x-trap.noscroll", "opened"),
 		html.Role("dialog"),
 		html.Attr("x-transition:enter", "transition duration-500"),
 		html.Attr("x-transition:leave", "transition duration-300"),
