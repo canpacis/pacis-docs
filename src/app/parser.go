@@ -13,6 +13,7 @@ import (
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
+	"github.com/gosimple/slug"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
 
@@ -49,14 +50,15 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.HeadingNode:
 		switch node.Attributes.Get(parser.HeadingLevelKey) {
 		case "#":
-			element = H1(Class("text-3xl font-semibold mb-2"))
+			element = H1(Class("text-3xl text-orange-600 font-semibold mb-2"))
 		case "##":
-			element = H2(Class("text-2xl font-semibold mb-2"))
+			element = H2(Class("text-2xl text-orange-600 font-semibold mb-2"))
 		case "###":
-			element = H3(Class("text-xl font-semibold mb-2"))
+			element = H3(Class("text-xl text-orange-600 font-semibold mb-2"))
 		default:
-			element = H4(Class("text-lg font-semibold mb-2"))
+			element = H4(Class("text-lg text-orange-600 font-semibold mb-2"))
 		}
+		element.SetAttribute("id", slug.Make(string(node.FullText())))
 	case parser.TableNode:
 		element = Table(Class("w-full caption-bottom text-sm"))
 	case parser.TableHeaderNode:

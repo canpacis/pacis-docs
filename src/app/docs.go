@@ -67,7 +67,6 @@ var Docs = []DocTitle{
 			{Label: "Attributes", Href: "/api-reference/attributes/", File: "attributes"},
 			{Label: "Server", Href: "/api-reference/server/", File: "server"},
 			{Label: "Middleware", Href: "/api-reference/middleware/", File: "middleware"},
-			{Label: "Request Data", Href: "/api-reference/request-data/", File: "request-data"},
 			{Label: "Metadata", Href: "/api-reference/metadata/", File: "metadata"},
 		},
 	},
