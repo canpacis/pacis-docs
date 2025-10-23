@@ -50,6 +50,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 				head,
 				font.Head(
 					font.New("Inter", font.WeightList{font.W100, font.W900}, font.Auto, font.Latin, font.LatinExt),
+					font.New("JetBrains+Mono", font.WeightList{font.W100, font.W800}, font.Auto, font.Latin, font.LatinExt),
 				),
 			),
 			Body(

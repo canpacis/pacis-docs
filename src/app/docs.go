@@ -52,7 +52,6 @@ var Docs = []DocTitle{
 			{Label: "Streaming", Href: "/core-concepts/streaming/", File: "streaming"},
 			{Label: "Routing", Href: "/core-concepts/routing/", File: "routing"},
 			{Label: "Middlewares", Href: "/core-concepts/middlewares/", File: "middlewares"},
-			{Label: "Caching", Href: "/core-concepts/caching/", File: "caching"},
 			{Label: "Assets", Href: "/core-concepts/assets/", File: "assets"},
 			{Label: "Deploying", Href: "/core-concepts/deploying/", File: "deploying"},
 		},

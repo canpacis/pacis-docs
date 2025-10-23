@@ -8,8 +8,10 @@ import (
 	"strings"
 
 	"components/ui/code"
+	"components/ui/kbd"
 
 	. "github.com/canpacis/pacis/html"
+	"github.com/canpacis/pacis/lucide"
 	"github.com/canpacis/pacis/server"
 	parser "github.com/sivukhin/godjot/djot_parser"
 )
@@ -30,13 +32,14 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		}
 		element = P(Class("inline leading-relaxed"))
 	case parser.LinkNode:
-		element = A(
-			Class("text-sky-400 underline inline break-all"),
+		return A(
+			Class("text-sky-400 inline-flex items-center gap-1 break-all"),
 			Href(node.Attributes.Get("href")),
+			If(strings.HasPrefix(node.Attributes.Get("href"), "https://"), Target("_blank")),
+
+			Text(node.FullText()),
+			lucide.ArrowUpRight(Class("size-4")),
 		)
-		if strings.HasPrefix(node.Attributes.Get("href"), "https://") {
-			element.SetAttribute("target", "_blank")
-		}
 	case parser.UnorderedListNode:
 		element = Ul(Class("list-disc list-inside"))
 	case parser.OrderedListNode:
@@ -79,7 +82,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 	case parser.QuoteNode:
 		element = Blockquote(Class("border-l-5 border-accent pl-2 py-2"))
 	case parser.VerbatimNode:
-		element = Span(Class("bg-accent rounded-sm text-sm py-1 px-2 font-mono"))
+		element = kbd.New(Class("font-mono")).(*Element)
 	case parser.ThematicBreakNode:
 		element = Hr()
 	case parser.CodeNode:
