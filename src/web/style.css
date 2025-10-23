@@ -118,6 +118,24 @@
   navigation: auto;
 }
 
+::view-transition-old(root) {
+  animation: page-out 300ms ease;
+}
+
+::view-transition-new(root) {
+  animation: page-in 300ms ease;
+}
+
+@keyframes page-out {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.98); opacity: 0; }
+}
+
+@keyframes page-in {
+  from { transform: scale(0.98); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 
 @layer base {
   * {

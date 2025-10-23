@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"components/ui/sheet"
+	"components/ui/view"
 
 	"github.com/canpacis/pacis-docs/src/icons"
 	. "github.com/canpacis/pacis/html"
@@ -88,6 +89,7 @@ func DocsLayout(app *server.Server, head, children Node) Node {
 			Class("flex flex-1 max-w-6xl w-full mx-auto my-0 md:my-2 gap-6 h-full"),
 
 			Nav(
+				view.Name("navigation"),
 				Class("hidden md:flex w-full flex-col max-w-[180px] h-fit lg:max-w-[224px] p-4 gap-4 sticky top-0"),
 
 				Logo(),

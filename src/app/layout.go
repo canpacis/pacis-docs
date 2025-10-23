@@ -21,16 +21,25 @@ type Speculation struct {
 
 func RootLayout(s *server.Server, head, children Node) Node {
 	specs := Speculation{
-		// Prerender: []SpeculationRule{
-		// 	{
-		// 		URLs:      []string{"/getting-started/introduction/", "/getting-started/installation/", "/getting-started/quick-start/"},
-		// 		Eagerness: "immediate",
-		// 	},
-		// 	{
-		// 		URLs:      []string{"/getting-started/templating/", "/getting-started/conventions/"},
-		// 		Eagerness: "eager",
-		// 	},
-		// },
+		Prerender: []SpeculationRule{
+			{
+				URLs: []string{
+					"/getting-started/introduction/",
+					"/getting-started/installation/",
+					"/getting-started/quick-start/",
+					"/getting-started/templating/",
+					"/getting-started/conventions/",
+					"/core-concepts/rendering/",
+					"/core-concepts/request-data/",
+					"/core-concepts/streaming/",
+					"/core-concepts/routing/",
+					"/core-concepts/middlewares/",
+					"/core-concepts/assets/",
+					"/core-concepts/deploying/",
+				},
+				Eagerness: "eager",
+			},
+		},
 	}
 
 	return Fragment(
