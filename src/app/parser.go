@@ -18,7 +18,7 @@ import (
 )
 
 func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
-	var element *Element
+	var element Node
 
 	switch node.Type {
 	case parser.ParagraphNode:
@@ -32,6 +32,19 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 			return Preview(previews[preview][idx])
 		}
 		element = P(Class("inline leading-relaxed"))
+	case parser.SymbolsNode:
+		symbol := string(node.FullText())
+
+		switch symbol {
+		case "x":
+			element = lucide.X(Class("inline text-red-500 size-5 mb-1"))
+		case "check":
+			element = lucide.Check(Class("inline text-green-500 size-5 mb-1"))
+		case "triangle-alert":
+			element = lucide.TriangleAlert(Class("inline text-amber-500 size-5 mb-1"))
+		default:
+			element = Text("unknown symbol")
+		}
 	case parser.LinkNode:
 		return A(
 			Class("text-sky-400 inline-flex items-center gap-1"),
@@ -58,7 +71,7 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		default:
 			element = H4(Class("text-lg text-orange-600 font-semibold mb-2"))
 		}
-		element.SetAttribute("id", slug.Make(string(node.FullText())))
+		element.(*Element).SetAttribute("id", slug.Make(string(node.FullText())))
 	case parser.TableNode:
 		element = Table(Class("w-full caption-bottom text-sm"))
 	case parser.TableHeaderNode:
@@ -107,12 +120,14 @@ func BuildMarkup(node parser.TreeNode[parser.DjotNode]) Node {
 		return nodes
 	}
 
-	class := node.Attributes.Get("class")
-	if len(class) > 0 {
-		element.AddClass(class)
-	}
-	for _, child := range node.Children {
-		element.AppendNode(BuildMarkup(child))
+	if el, ok := element.(*Element); ok {
+		class := node.Attributes.Get("class")
+		if len(class) > 0 {
+			el.AddClass(class)
+		}
+		for _, child := range node.Children {
+			el.AppendNode(BuildMarkup(child))
+		}
 	}
 	return element
 }

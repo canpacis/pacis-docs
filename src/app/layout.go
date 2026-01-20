@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"os"
 
 	. "github.com/canpacis/pacis/html"
 	"github.com/canpacis/pacis/server"
@@ -57,7 +58,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 				Link(Rel("stylesheet"), Href(s.Asset("/src/web/style.css"))),
 				Script(Type("module"), Src(s.Asset("/src/web/main.ts"))),
 				Script(Type("speculationrules"), JSON(specs)),
-				Script(Defer, Src("https://analytics.formkitt.com/script.js"), Data("website-id", "78b36665-a529-4cb2-9297-938657f8b692")),
+				If(s.Env() == server.Prod, Script(Defer, Src(os.Getenv("ANALYTICS_URL")), Data("website-id", os.Getenv("ANALYTICS_ID")))),
 				head,
 				font.Head(
 					font.New("Inter", font.WeightList{font.W100, font.W900}, font.Auto, font.Latin, font.LatinExt),

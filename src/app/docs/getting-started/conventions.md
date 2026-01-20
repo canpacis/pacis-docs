@@ -89,7 +89,7 @@ HTML elements defined in the `html` package accept a variadic item of `html.Iten
 
 Having every item in the same argument list, especially when building a complex, nested UIs, can get really confusing really quick. To minimize, I advise keeping your HTML attributes apart from your child nodes.
 
-No ❌
+No :x:
 
 {noaccessory=true}
 ```go
@@ -103,7 +103,7 @@ Div(
 
 Do **not** mix attributes and child nodes.
 
-No ❌
+No :x:
 
 {noaccessory=true}
 ```go
@@ -116,7 +116,7 @@ Div(
 )
 ```
 
-Yes ✅
+Yes :check:
 
 {noaccessory=true}
 ```go
@@ -131,7 +131,7 @@ Div(
 
 Ocasionally inlining your element with a 1 or 2 attributes/child nodes is fine.
 
-OK ✅
+OK :check:
 
 {noaccessory=true}
 ```go

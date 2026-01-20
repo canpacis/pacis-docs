@@ -17,7 +17,7 @@ func main() {
 
 	srv.Use(middleware.DefaultColorScheme)
 
-	gzip := middleware.DefaultGzip(options.Env == server.Dev)
+	gzip := middleware.DefaultGzip(srv.Env() == server.Dev)
 	srv.HandlePage("/", &app.HomePage{}, app.RootLayout, gzip)
 	for _, doc := range app.Docs {
 		if len(doc.Links) == 0 {
