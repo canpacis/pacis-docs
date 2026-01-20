@@ -281,7 +281,7 @@ html.Pre(html.JSON(map[string]any{
 #### `type RawUnsafe string`
 
 Represents raw HTML content inserted directly into the output without escaping.
-⚠️ Use cautiously — this bypasses HTML escaping and can introduce XSS vulnerabilities.
+:triangle-alert: Use cautiously — this bypasses HTML escaping and can introduce XSS vulnerabilities.
 
 **Implements**
 
