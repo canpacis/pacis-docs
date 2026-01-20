@@ -58,7 +58,7 @@ func RootLayout(s *server.Server, head, children Node) Node {
 				Link(Rel("stylesheet"), Href(s.Asset("/src/web/style.css"))),
 				Script(Type("module"), Src(s.Asset("/src/web/main.ts"))),
 				Script(Type("speculationrules"), JSON(specs)),
-				If(os.Getenv("APP_ENV") != "dev", Script(Defer, Src(os.Getenv("ANALYTICS_URL")), Data("website-id", os.Getenv("ANALYTICS_ID")))),
+				If(s.Env() == server.Prod, Script(Defer, Src(os.Getenv("ANALYTICS_URL")), Data("website-id", os.Getenv("ANALYTICS_ID")))),
 				head,
 				font.Head(
 					font.New("Inter", font.WeightList{font.W100, font.W900}, font.Auto, font.Latin, font.LatinExt),

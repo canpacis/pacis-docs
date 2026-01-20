@@ -6,7 +6,7 @@ replace components => ./src/components
 
 require (
 	components v0.0.0-00010101000000-000000000000
-	github.com/canpacis/pacis v0.7.1
+	github.com/canpacis/pacis v0.7.2
 	github.com/gosimple/slug v1.15.0
 	github.com/joho/godotenv v1.5.1
 	github.com/sivukhin/godjot v1.0.6
